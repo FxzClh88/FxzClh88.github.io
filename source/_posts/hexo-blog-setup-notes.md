@@ -73,6 +73,20 @@ cd /d C:\Users\Administrator\myblog
 pause
 ```
 
+完整的本地编辑流程（万一你要用）
+bash
+# 第 1 步：先拉一下，确保本地是最新的（防冲突）
+cd /c/Users/Administrator/myblog
+git pull origin source
+
+# 第 2 步：改你的文章（用编辑器）
+
+# 第 3 步：提交 + 推送
+git add -A
+git commit -m "更新文章"
+git push origin source
+核心就一条规矩：改之前先 pull，改完之后 push，就像云盘「先下载最新版，改完再上传」一样。
+
 ## 总结
 
 这次搭博客最大的体会：静态博客的「好看」背后，都是一行行纯文本的 Markdown 和配置文件。踩坑不可怕，关键是遇到报错别慌，顺着报错信息一层层查，总能找到根源。
