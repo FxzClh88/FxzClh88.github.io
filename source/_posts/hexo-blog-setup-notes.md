@@ -1,7 +1,7 @@
 ---
 title: 从零搭建 Hexo 博客踩坑记录
 date: 2026-08-14 13:48:00
-categories: 博客搭建
+categories: [学习, Hexo]
 tags: [Hexo, GitHub, Markdown, 博客]
 description: 记录用 Hexo + Butterfly + GitHub Pages 搭建个人技术博客的全过程，以及踩过的 8 个坑
 cover: /img/banner.jpg

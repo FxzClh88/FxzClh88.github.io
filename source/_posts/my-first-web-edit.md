@@ -1,7 +1,7 @@
 ---
 title: 我的网页编辑测试
 date: 2026-08-14 14:15:00
-categories: 测试
+categories: [学习, 测试]
 tags: [测试, 网页编辑]
 description: 这是我第一次直接在网页上写的文章
 cover: /img/banner.jpg
