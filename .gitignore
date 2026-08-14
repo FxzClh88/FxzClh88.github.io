@@ -1,0 +1,20 @@
+# Dependencies
+node_modules/
+
+# Build output
+public/
+
+# Deploy temp
+.deploy_git/
+
+# Hexo cache
+db.json
+
+# Logs
+*.log
+
+# One-off scripts and temp files
+convert_heic.py
+_err.txt
+_nul.txt
+_out.txt
