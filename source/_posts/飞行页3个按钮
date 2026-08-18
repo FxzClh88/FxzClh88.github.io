@@ -20,75 +20,84 @@ CustomMenuButton（圆形蓝色按钮控件）× 3
   ├── "任务规划" → 跳转规划页（showPlanView）
   └── "返航"    → 触发返航（guidedController）
 ```
+位置：地图顶部居中，最高层级显示。
 
+## 二、控件：CustomMenuButton（蓝色圆形的秘密）
 
-正文文字，支持 **加粗**、*斜体*、~~删除线~~、`行内代码`。
+文件：src/QmlControls/CustomMenuButton.qml
 
-### 更小的标题（三级）
-
-1. 有序列表第一项
-2. 有序列表第二项
-
-- 无序列表
-- 无序列表
-
-#### 代码块（写代码必用，自动高亮）
-
-```cpp
-// C++ 示例
-int main() {
-    return 0;
-}
-```
+圆形（第 31 行）：
 
 ```qml
-// QML 示例
-Rectangle {
-    width: 100
-    height: 100
-    color: "red"
+radius: _rootButton.height / 2     // 圆形 = 半径取高度一半
+````
+
+蓝色背景（第 28 行）——按钮颜色由调用处传入：
+```qml
+background: Rectangle {
+    color: backgroundColor          // 用属性，调用处传蓝色
+    ...
+}
+```
+按下反馈：透明度变化（第 32 行）：
+
+```qml
+opacity: (_rootButton.pressed || _rootButton.checked) ? 0.8 : 1
+```
+## 三、3 个按钮的实现
+
+文件：src/FlyView/FlyViewCustomLayer.qml（第 55-86 行）
+
+① "开始"按钮——确认起飞：
+```qml
+CustomMenuButton {
+    text:            qsTr("开始")
+    imageResource:   "/res/TakeoffLogo.svg"        // 起飞图标
+    backgroundColor: "#cc0088FF"                   // 蓝色半透明
+    onClicked: globals.guidedControllerFlyView.confirmAction(
+                   globals.guidedControllerFlyView.actionStartMission)
+}
+```
+② "任务规划"按钮——跳转规划页：
+
+```qml
+CustomMenuButton {
+    text:            qsTr("任务规划")
+    imageResource:   "/res/PlanPathLogo.svg"       // 航线图标
+    backgroundColor: "#cc0088FF"
+    onClicked: mainWindow.showPlanView()           // 切到 PlanView
+}
+```
+③ "返航"按钮——触发返航：
+
+```qml
+CustomMenuButton {
+    text:            qsTr("返航")
+    imageResource:   "/res/LandLogo.svg"           // 降落图标
+    backgroundColor: "#cc0088FF"
+    onClicked: globals.guidedControllerFlyView.confirmAction(
+                   globals.guidedControllerFlyView.actionRTL)
 }
 ```
 
-#### 引用
+## 四、位置与层级（地图顶部居中）
 
-> 这是引用块，适合放重点提示或名言。
+```qml
+Item {
+    anchors.top:            parent.top
+    anchors.topMargin:      ScreenTools.defaultFontPixelHeight * 0.5
+    anchors.horizontalCenter: parent.horizontalCenter   // 水平居中
+    z: QGroundControl.zOrderTopMost                     // 最高层级，不被地图盖住
+    Row { spacing: ... }                                // 3 个按钮横排
+}
+```
 
-#### 图片
+## 五、改动文件清单
 
-![图片说明文字](/img/xxx.jpg)
+| 文件 | 改动 |
+| --- | --- |
+| src/QmlControls/CustomMenuButton.qml | 圆形按钮控件（Qt6 适配：ButtonStyle→background） |
+| src/FlyView/FlyViewCustomLayer.qml | 3 个按钮 + 位置层级 |
+| resources/（TakeoffLogo/PlanPathLogo/LandLogo.svg） | 旧版图标复制 + 注册 |
 
-#### 链接
-
-[链接文字](https://example.com)
-
-#### 表格
-
-| 列1 | 列2 | 列3 |
-| --- | --- | --- |
-| 内容 | 内容 | 内容 |
-
----
-
-## 📌 写作流程（记住）
-
-1. 复制这个文件的内容，改标题和正文
-2. 保存为 `source/_posts/标题.md`（或运行 `hexo new post 标题` 自动生成）
-3. 跑这一条命令更新上线：
-   ```
-   cd /c/Users/Administrator/myblog && NODE_OPTIONS= node node_modules/hexo/bin/hexo clean && NODE_OPTIONS= node node_modules/hexo/bin/hexo generate && NODE_OPTIONS= node node_modules/hexo/bin/hexo deploy
-   ```
-
-## 📌 front matter 字段说明
-
-| 字段 | 作用 | 示例 |
-| --- | --- | --- |
-| title | 文章标题 | 我的第一篇学习笔记 |
-| date | 发布日期（自动）| 2026-08-14 10:46:59 |
-| categories | 分类（会进「分类」菜单）| QGC开发 |
-| tags | 标签（会进「标签」菜单）| [侧边栏, QML] |
-| description | 摘要 | 一段简介 |
-| cover | 封面图路径 | /img/banner.jpg |
-| sticky | 置顶（可选）| 1 |
-
-> 💡 分类和标签是**自动聚合**的：写了 `categories: QGC开发`，点「分类」菜单就能看到「QGC开发」这个分类下所有文章。
+## 总结
