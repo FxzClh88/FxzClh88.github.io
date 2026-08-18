@@ -10,9 +10,17 @@ cover: /img/banner.jpg
 
 ## 前言 
 
-开始/任务规划/返航"3 个蓝色按钮
+飞行页（Fly View）地图顶部的 开始 / 任务规划 / 返航 3 个蓝色圆形按钮迁移。旧版 FlyerLink 定制功能，新版需重新接入。
 
-## 小标题（二级）
+## 一、整体思路
+
+```text
+CustomMenuButton（圆形蓝色按钮控件）× 3
+  ├── "开始"    → 触发起飞（guidedController）
+  ├── "任务规划" → 跳转规划页（showPlanView）
+  └── "返航"    → 触发返航（guidedController）
+```
+
 
 正文文字，支持 **加粗**、*斜体*、~~删除线~~、`行内代码`。
 
