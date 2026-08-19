@@ -6,7 +6,8 @@ tags: [标签1, 标签2, 标签3]
 description: 了解代码结构
 cover: /img/banner.jpg
 # 想置顶就取消这行注释（数字越大越靠前）
----# 02 · 03-Vehicle模块
+---
+# 02 · 03-Vehicle模块
 # 03 · Vehicle 模块（载具模型）
 
 > 基于 `2.0.5\source\qgroundcontrol\src\Vehicle\`
