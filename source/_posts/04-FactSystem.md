@@ -1,3 +1,12 @@
+---
+title: FactSystem
+date: 2026-08-14 12:00:00
+categories: [QGC,FactSystem]
+tags: [标签1, 标签2, 标签3]
+description: FactSystem
+cover: /img/banner.jpg
+# sticky: 1   # 想置顶就取消这行注释（数字越大越靠前）
+---
 # 04 · FactSystem（事实系统 / 参数抽象层）
 
 > 基于 `2.0.5\source\qgroundcontrol\src\FactSystem\`
