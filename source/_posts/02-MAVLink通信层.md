@@ -1,12 +1,13 @@
 ---
 title: 02-MAVLink通信层
 date: 2026-08-14 12:00:00
-categories: [QGC,QGC框架骨架]
+categories: [QGC,MAVLink通信层]
 tags: [标签1, 标签2, 标签3]
-description: 了解代码结构
+description: MAVLink通信层
 cover: /img/banner.jpg
 # sticky: 1   # 想置顶就取消这行注释（数字越大越靠前）
----# 02 · MAVLink 通信层
+---
+# 02 · MAVLink 通信层
 
 > 基于 `2.0.5\source\qgroundcontrol\src\Comms\` 和 `src\MAVLink\`
 
