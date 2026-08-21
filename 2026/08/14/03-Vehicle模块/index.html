@@ -1,0 +1,394 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>03-Vehicle模块 | 丽欢同学 | Li-H</title><meta name="author" content="Li-H"><meta name="copyright" content="Li-H"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="了解代码结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="03-Vehicle模块">
+<meta property="og:url" content="https://fxzclh88.github.io/2026/08/14/03-Vehicle%E6%A8%A1%E5%9D%97/index.html">
+<meta property="og:site_name" content="丽欢同学 | Li-H">
+<meta property="og:description" content="了解代码结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fxzclh88.github.io/img/banner.jpg">
+<meta property="article:published_time" content="2026-08-14T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-21T06:54:17.410Z">
+<meta property="article:author" content="Li-H">
+<meta property="article:tag" content="标签1">
+<meta property="article:tag" content="标签2">
+<meta property="article:tag" content="标签3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fxzclh88.github.io/img/banner.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "03-Vehicle模块",
+  "url": "https://fxzclh88.github.io/2026/08/14/03-Vehicle%E6%A8%A1%E5%9D%97/",
+  "image": "https://fxzclh88.github.io/img/banner.jpg",
+  "datePublished": "2026-08-14T12:00:00.000Z",
+  "dateModified": "2026-08-21T06:54:17.410Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Li-H",
+      "url": "https://FxzClh88.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://fxzclh88.github.io/2026/08/14/03-Vehicle%E6%A8%A1%E5%9D%97/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '03-Vehicle模块',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/banner.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">丽欢同学 | Li-H</span></a><a class="nav-page-title" href="/"><span class="site-name">03-Vehicle模块</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">03-Vehicle模块</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-21T06:54:17.410Z" title="更新于 2026-08-21 06:54:17">2026-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/QGC/">QGC</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/QGC/Vehicle%E6%A8%A1%E5%9D%97/">Vehicle模块</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="02-·-03-Vehicle模块"><a href="#02-·-03-Vehicle模块" class="headerlink" title="02 · 03-Vehicle模块"></a>02 · 03-Vehicle模块</h1><h1 id="03-·-Vehicle-模块（载具模型）"><a href="#03-·-Vehicle-模块（载具模型）" class="headerlink" title="03 · Vehicle 模块（载具模型）"></a>03 · Vehicle 模块（载具模型）</h1><blockquote>
+<p>基于 <code>2.0.5\source\qgroundcontrol\src\Vehicle\</code></p>
+</blockquote>
+<h2 id="一、Vehicle-在架构中的位置"><a href="#一、Vehicle-在架构中的位置" class="headerlink" title="一、Vehicle 在架构中的位置"></a>一、Vehicle 在架构中的位置</h2><p>Vehicle 是<strong>全 QGC 最核心的类</strong>——它把”一架载具（飞机&#x2F;车&#x2F;船&#x2F;潜水器）”抽象成一个对象，聚合了几乎所有子管理器。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">MAVLinkProtocol::messageReceived</span><br><span class="line">        ↓</span><br><span class="line">MultiVehicleManager（发现载具、管理多机）</span><br><span class="line">        ↓</span><br><span class="line">Vehicle（单架载具的完整模型 = 上帝类）</span><br><span class="line">   ├── 飞行状态（位置/姿态/模式/解锁）</span><br><span class="line">   ├── 子管理器（参数/任务/云台/相机/避障...）</span><br><span class="line">   └── FactGroup 容器（一堆实时数据 Facts）</span><br></pre></td></tr></table></figure>
+
+<h2 id="二、MultiVehicleManager-——-多载具总管家"><a href="#二、MultiVehicleManager-——-多载具总管家" class="headerlink" title="二、MultiVehicleManager —— 多载具总管家"></a>二、MultiVehicleManager —— 多载具总管家</h2><p><code>src/Vehicle/MultiVehicleManager.h</code>，单例，QML 可访问。</p>
+<table>
+<thead>
+<tr>
+<th>职责</th>
+<th>关键成员&#x2F;属性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>管理所有载具</td>
+<td><code>vehicles</code>（QmlObjectListModel）、<code>getVehicleById()</code></td>
+</tr>
+<tr>
+<td>当前活跃载具</td>
+<td><code>activeVehicle</code>、<code>setActiveVehicle()</code></td>
+</tr>
+<tr>
+<td>多选载具（多机协同）</td>
+<td><code>selectedVehicles</code>、<code>selectVehicle()</code> &#x2F; <code>deselectVehicle()</code></td>
+</tr>
+<tr>
+<td>离线编辑载具</td>
+<td><code>offlineEditingVehicle</code>（断开连接时做规划用）</td>
+</tr>
+<tr>
+<td>发送 GCS 心跳</td>
+<td><code>_gcsHeartbeatTimer</code>（1 秒&#x2F;次）</td>
+</tr>
+<tr>
+<td>信号</td>
+<td><code>vehicleAdded</code> &#x2F; <code>vehicleRemoved</code> &#x2F; <code>activeVehicleChanged</code></td>
+</tr>
+</tbody></table>
+<p><strong>载具是怎么被发现的</strong>（关键流程）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MAVLinkProtocol 收到飞控心跳</span><br><span class="line">   → vehicleHeartbeatInfo(link, vehicleId, componentId, firmwareType, vehicleType)</span><br><span class="line">   → MultiVehicleManager::_vehicleHeartbeatInfo() 槽</span><br><span class="line">   → 若是新 vehicleId → new Vehicle(link, vehicleId, ...)</span><br><span class="line">   → vehicleAdded 信号 → UI 更新</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>对 FlyerLink 的意义</strong>：FlyerLink 的”多架设备管理”定制，就是在这个多载具框架上做的——它利用 MultiVehicleManager 的 <code>vehicles</code>&#x2F;<code>selectedVehicles</code>&#x2F;<code>activeVehicle</code> 能力。</p>
+</blockquote>
+<h2 id="三、Vehicle-——-上帝类"><a href="#三、Vehicle-——-上帝类" class="headerlink" title="三、Vehicle —— 上帝类"></a>三、Vehicle —— 上帝类</h2><p><code>src/Vehicle/Vehicle.h</code>（约 1300 行，全 QGC 最大头文件之一）。</p>
+<p>关键继承：<code>class Vehicle : public VehicleFactGroup, public VehicleTypes</code></p>
+<blockquote>
+<p><strong>注意它继承 <code>VehicleFactGroup</code></strong> —— 意味着 Vehicle 自己<strong>就是</strong>一个 FactGroup（事实组），飞行姿态&#x2F;位置&#x2F;速度&#x2F;电池等实时数据都是它的 Fact。QML 里直接 <code>vehicle.vehicle.roll.value</code> 这样读。</p>
+</blockquote>
+<h3 id="3-1-核心状态属性（QML-直接读）"><a href="#3-1-核心状态属性（QML-直接读）" class="headerlink" title="3.1 核心状态属性（QML 直接读）"></a>3.1 核心状态属性（QML 直接读）</h3><table>
+<thead>
+<tr>
+<th>属性</th>
+<th>含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>id</code></td>
+<td>载具 ID（MAVLink sysid）</td>
+</tr>
+<tr>
+<td><code>coordinate</code> &#x2F; <code>homePosition</code> &#x2F; <code>armedPosition</code></td>
+<td>当前位置 &#x2F; 家的位置 &#x2F; 解锁位置</td>
+</tr>
+<tr>
+<td><code>armed</code></td>
+<td>是否已解锁（解锁&#x3D;可起飞）</td>
+</tr>
+<tr>
+<td><code>flightMode</code> &#x2F; <code>flightModes</code></td>
+<td>当前&#x2F;可选飞行模式</td>
+</tr>
+<tr>
+<td><code>fixedWing/multiRotor/vtol/rover/sub/airship</code></td>
+<td>载具类型布尔值</td>
+</tr>
+<tr>
+<td><code>messagesReceived/Sent/Lost</code></td>
+<td>消息收发统计</td>
+</tr>
+<tr>
+<td><code>flying/landing/guidedMode</code></td>
+<td>飞行状态 &#x2F; 降落中 &#x2F; 引导模式</td>
+</tr>
+<tr>
+<td><code>vehicleTypeString</code> &#x2F; <code>firmwareTypeString</code></td>
+<td>类型&#x2F;固件的显示字符串</td>
+</tr>
+</tbody></table>
+<h3 id="3-2-聚合的子管理器（Vehicle-的”下属们”）"><a href="#3-2-聚合的子管理器（Vehicle-的”下属们”）" class="headerlink" title="3.2 聚合的子管理器（Vehicle 的”下属们”）"></a>3.2 聚合的子管理器（Vehicle 的”下属们”）</h3><table>
+<thead>
+<tr>
+<th>子管理器</th>
+<th>属性</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>ParameterManager</td>
+<td><code>parameterManager</code></td>
+<td>飞控参数读写</td>
+</tr>
+<tr>
+<td>VehicleLinkManager</td>
+<td><code>vehicleLinkManager</code></td>
+<td>载具的多链路管理</td>
+</tr>
+<tr>
+<td>MissionManager</td>
+<td>（成员）</td>
+<td>任务&#x2F;航点收发</td>
+</tr>
+<tr>
+<td>GimbalController</td>
+<td><code>gimbalController</code></td>
+<td>云台</td>
+</tr>
+<tr>
+<td>QGCCameraManager</td>
+<td>（成员）</td>
+<td>相机</td>
+</tr>
+<tr>
+<td>RemoteIDManager</td>
+<td><code>remoteIDManager</code></td>
+<td>Remote ID 广播</td>
+</tr>
+<tr>
+<td>VehicleObjectAvoidance</td>
+<td><code>objectAvoidance</code></td>
+<td>避障</td>
+</tr>
+<tr>
+<td>Autotune</td>
+<td><code>autotune</code></td>
+<td>自动调参</td>
+</tr>
+<tr>
+<td>TrajectoryPoints</td>
+<td><code>trajectoryPoints</code></td>
+<td>轨迹点</td>
+</tr>
+<tr>
+<td>InitialConnectStateMachine</td>
+<td>（成员）</td>
+<td>初始连接状态机</td>
+</tr>
+<tr>
+<td>MavCommandQueue</td>
+<td>（成员）</td>
+<td>MAVLink 命令队列</td>
+</tr>
+</tbody></table>
+<h3 id="3-3-FactGroup-容器（实时数据的-Facts）"><a href="#3-3-FactGroup-容器（实时数据的-Facts）" class="headerlink" title="3.3 FactGroup 容器（实时数据的 Facts）"></a>3.3 FactGroup 容器（实时数据的 Facts）</h3><p>Vehicle 把实时遥测数据组织成一个个 <strong>FactGroup</strong>，每个都是 <code>FactGroup*</code> 属性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">vehicle（本体：姿态/速度/电池） gps / gps2 / gpsAggregate</span><br><span class="line">wind / vibration / temperature / clock / setpoint</span><br><span class="line">estimatorStatus / terrain / distanceSensors / localPosition</span><br><span class="line">hygrometer / generator / efi / radioStatus</span><br><span class="line">actuators / batteries / escs</span><br></pre></td></tr></table></figure>
+
+<p>这些 FactGroup 的细节在下一篇《04-FactSystem》展开。</p>
+<h3 id="3-4-Q-INVOKABLE-控制方法（QML-可调）"><a href="#3-4-Q-INVOKABLE-控制方法（QML-可调）" class="headerlink" title="3.4 Q_INVOKABLE 控制方法（QML 可调）"></a>3.4 Q_INVOKABLE 控制方法（QML 可调）</h3><table>
+<thead>
+<tr>
+<th>方法</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>virtualTabletJoystickValue(roll, pitch, yaw, thrust)</code></td>
+<td><strong>虚拟摇杆输入</strong>（平板&#x2F;键盘遥控）</td>
+</tr>
+<tr>
+<td><code>guidedModeTakeoff(alt)</code> &#x2F; <code>guidedModeLand()</code> &#x2F; <code>guidedModeRTL()</code></td>
+<td>一键起飞&#x2F;降落&#x2F;返航</td>
+</tr>
+<tr>
+<td><code>guidedModeGotoLocation(coord)</code> &#x2F; <code>guidedModeChangeAltitude()</code></td>
+<td>引导飞行</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>⚠️ <strong>重点标注</strong>：<code>virtualTabletJoystickValue()</code> 就是 FlyerLink”虚拟遥控&#x2F;键盘控制”定制功能的底层 API。定制 UI 层（虚拟摇杆控件）最终就是调用这个方法来遥控载具。</p>
+</blockquote>
+<h2 id="四、一句话总结"><a href="#四、一句话总结" class="headerlink" title="四、一句话总结"></a>四、一句话总结</h2><ul>
+<li><strong>MultiVehicleManager</strong> &#x3D; 车库管理员（管有多少辆车、哪辆是当前车）</li>
+<li><strong>Vehicle</strong> &#x3D; 单辆车（含所有仪表盘 + 所有控制按钮 + 所有子系统）</li>
+</ul>
+<p>读懂了 Vehicle，QGC 的一半逻辑就通了。</p>
+<hr>
+<p><strong>下一步</strong>：04-FactSystem.md —— 参数&#x2F;数据的统一抽象层（Fact&#x2F;FactGroup）。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://FxzClh88.github.io">Li-H</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fxzclh88.github.io/2026/08/14/03-Vehicle%E6%A8%A1%E5%9D%97/">https://fxzclh88.github.io/2026/08/14/03-Vehicle%E6%A8%A1%E5%9D%97/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://FxzClh88.github.io" target="_blank">丽欢同学 | Li-H</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE1/">标签1</a><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE2/">标签2</a><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE3/">标签3</a></div><div class="post-share"><div class="social-share" data-image="/img/banner.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/14/04-FactSystem/" title="FactSystem"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">FactSystem</div></div><div class="info-2"><div class="info-item-1">04 · FactSystem（事实系统 &#x2F; 参数抽象层） 基于 2.0.5\source\qgroundcontrol\src\FactSystem\  一、FactSystem 是什么QGC 把”飞控参数”和”实时遥测数据”统一抽象成 Fact（事实）。所有参数的读写、显示、校验都走这一套机制。 123456789飞控参数 / 遥测数据        ↓ParameterManager（下载/读写/缓存）        ↓Fact（单个值：名字 + 元数据 + 值 + 单位）        ↓FactGroup（一组 Facts 的容器，如 Vehicle 本体）        ↓QML UI（自动绑定显示 + 编辑控件）  二、Fact —— 单个事实（核心单元）src/FactSystem/Fact.h，继承 QObject，QML 可用。 核心概念：raw value vs cooked value（最关键的一条）    值 含义 例子    rawValue 飞控的原始值 温度 &#x3D; 2345（厘摄氏度）   cookedValue 换算后的用户单位...</div></div></div></a><a class="pagination-related" href="/2026/08/14/02-MAVLink%E9%80%9A%E4%BF%A1%E5%B1%82/" title="02-MAVLink通信层"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">02-MAVLink通信层</div></div><div class="info-2"><div class="info-item-1">02 · MAVLink 通信层 基于 2.0.5\source\qgroundcontrol\src\Comms\ 和 src\MAVLink\  一、通信层在架构中的位置这是数据从飞控进入 QGC 的第一站。理解它，后面 Vehicle&#x2F;FactSystem 都顺了。 1飞控 ⇄ [物理链路] → LinkManager → MAVLinkProtocol → Vehicle  二、两个目录的分工（新版的重要变化）   目录 内容 角色    src/Comms/ LinkManager、LinkInterface、各链路、MAVLinkProtocol 链路管理 + 协议处理   src/MAVLink/ QGCMAVLink（QML单例）、MAVLinkFTP、ImageProtocolManager MAVLink 工具&#x2F;扩展    ⚠️ 新版变化：旧版的 MAVLinkProtocol 在 src/comm/ 下（Qt5 时代），新版把它合并进了 Comms/ 模块——因为协议处理和链路管理高度耦合。 而 src/MAVLink/QGCMAVLin...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/14/%E5%90%AF%E5%8A%A8%E5%8A%A8%E7%94%BB/" title="启动动画"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">启动动画</div></div><div class="info-2"><div class="info-item-1">前言开头动画 一、🔍 旧版启动动画是怎么实现的位置：旧版 src&#x2F;QGCApplication.cc 构造函数（第 202-211 行） 123456QLabel *label = new QLabel();QMovie *movie = new QMovie(&quot;:/res/resources/donghua.gif&quot;);  // 播放 GIFlabel-&gt;setMovie(movie);movie-&gt;start();label-&gt;showFullScreen();                                     // 全屏QTimer::singleShot(5000, label, SLOT(close()));              // 5 秒后关闭 动画资源：旧版&#x2F;resources&#x2F;donghua.gif（飞行者图标动画） 二、⚠️ 不能直接照搬新版 QGC 是 QGuiApplication（纯 QML 架构旧版用的 QLabel + QMovie 是 Qt Widge...</div></div></div></a><a class="pagination-related" href="/2026/08/14/01-%E6%80%BB%E4%BD%93%E6%9E%B6%E6%9E%84%E4%B8%8E%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" title="总体架构与启动流程"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">总体架构与启动流程</div></div><div class="info-2"><div class="info-item-1">01 · 新版 QGC 总体架构与启动流程 基于 2.0.5\source\qgroundcontrol\（新版官方 QGC，Qt6 + CMake）  一、启动流程（main.cc 完整链路）新版 QGC 的入口是 src/main.cc，流程非常线性： 12345678910111213main(argc, argv) ├─ 1. QGCCommandLineParser::parse()          解析命令行参数 ├─ 2. Platform::initialize()                 平台初始化（各OS差异） ├─ 3. QGCApplication app(...)                创建核心应用类（QGuiApplication 子类） ├─ 4. LogManager::installHandler()           安装日志处理器 ├─ 5. Platform::setupPostApp()               平台后置初始化 ├─ 6. app.init()                            ...</div></div></div></a><a class="pagination-related" href="/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/" title="06-UI层三大视图"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">06-UI层三大视图</div></div><div class="info-2"><div class="info-item-1">06 · UI 层（三大视图 + QML 组织） 基于 2.0.5\source\qgroundcontrol\src\MainWindow\ 和 src\FlyView\  一、UI 层整体结构QGC 的 UI 是纯 QML，根窗口是 MainWindow.qml（ApplicationWindow）。 12345MainWindow.qml（ApplicationWindow 根窗口） ├── FlyView（飞行视图，默认显示）★ ├── PlanView（规划视图，默认隐藏） ├── toolDrawer（工具抽屉 → 加载 AnalyzeView / 车辆配置 / 设置） └── footer: LogReplayStatusBar（日志回放状态栏）  关键：三大视图不是并列的    视图 加载方式 说明    FlyView MainWindow 直接子元素，visible 控制 飞行主界面   PlanView MainWindow 直接子元素，visible 控制 任务规划   AnalyzeView toolDrawer 的 Loader 动态加载 日志分析（工...</div></div></div></a><a class="pagination-related" href="/2026/08/14/02-MAVLink%E9%80%9A%E4%BF%A1%E5%B1%82/" title="02-MAVLink通信层"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">02-MAVLink通信层</div></div><div class="info-2"><div class="info-item-1">02 · MAVLink 通信层 基于 2.0.5\source\qgroundcontrol\src\Comms\ 和 src\MAVLink\  一、通信层在架构中的位置这是数据从飞控进入 QGC 的第一站。理解它，后面 Vehicle&#x2F;FactSystem 都顺了。 1飞控 ⇄ [物理链路] → LinkManager → MAVLinkProtocol → Vehicle  二、两个目录的分工（新版的重要变化）   目录 内容 角色    src/Comms/ LinkManager、LinkInterface、各链路、MAVLinkProtocol 链路管理 + 协议处理   src/MAVLink/ QGCMAVLink（QML单例）、MAVLinkFTP、ImageProtocolManager MAVLink 工具&#x2F;扩展    ⚠️ 新版变化：旧版的 MAVLinkProtocol 在 src/comm/ 下（Qt5 时代），新版把它合并进了 Comms/ 模块——因为协议处理和链路管理高度耦合。 而 src/MAVLink/QGCMAVLin...</div></div></div></a><a class="pagination-related" href="/2026/08/14/05-%E4%BB%BB%E5%8A%A1%E8%A7%84%E5%88%92/" title="任务规划"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">任务规划</div></div><div class="info-2"><div class="info-item-1">05 · 任务规划（PlanManager &#x2F; MissionManager） 基于 2.0.5\source\qgroundcontrol\src\MissionManager\  一、任务模块概览QGC 把”飞控上的任务数据”分成三种，统一管理：    类型 MAV_MISSION_TYPE 管理器 用途    飞行任务 MISSION MissionManager 航点&#x2F;命令序列   地理围栏 FENCE GeoFenceManager 电子围栏（限制飞行范围）   集结点 RALLY RallyPointManager 安全集结点（返航备降点）   二、三合一架构（新版核心重构）1234PlanManager（基类，任务收发状态机） ├── MissionManager（飞行任务） ├── GeoFenceManager（地理围栏） └── RallyPointManager（集结点）  PlanManager 是三者共同基类，用 MAV_MISSION_TYPE _planType 区分类型。三者的收发逻辑完全相同，只是类型不同。这是新版对旧版的一大...</div></div></div></a><a class="pagination-related" href="/2026/08/14/%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/" title="代码结构"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">代码结构</div></div><div class="info-2"><div class="info-item-1">前言  QGC代码结构的理解   源码目录对照图   目录 属于 干啥的    src&#x2F;FlyView&#x2F; 前端	飞行界面（侧边栏、弹窗、蓝色按钮）    src&#x2F;PlanView&#x2F; 前端	规划页（6 个按钮、文件&#x2F;图案弹窗）    src&#x2F;QmlControls&#x2F; 前端	通用控件库（CustomImageButton 等）    src&#x2F;Toolbar&#x2F; 前端	顶部工具栏（品牌化）    src&#x2F;Settings&#x2F; + AppSettings&#x2F; 后端	配置项系统（你加开关的地方）    src&#x2F;Vehicle&#x2F; 后端	飞机模型（customFlightTime 在这）    src&#x2F;MAVLink&#x2F; 后端	通信协议（和飞机对话的语言）    src&#x2F;Comm&#x2F; 后端	通信链路（串口&#x2F;UDP&#x2F;TCP）    src&#x2F;MissionManager&#x2F; 后端	任务管理（航...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Li-H</div><div class="author-info-description">我的技术学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#02-%C2%B7-03-Vehicle%E6%A8%A1%E5%9D%97"><span class="toc-number">1.</span> <span class="toc-text">02 · 03-Vehicle模块</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#03-%C2%B7-Vehicle-%E6%A8%A1%E5%9D%97%EF%BC%88%E8%BD%BD%E5%85%B7%E6%A8%A1%E5%9E%8B%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">03 · Vehicle 模块（载具模型）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81Vehicle-%E5%9C%A8%E6%9E%B6%E6%9E%84%E4%B8%AD%E7%9A%84%E4%BD%8D%E7%BD%AE"><span class="toc-number">2.1.</span> <span class="toc-text">一、Vehicle 在架构中的位置</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81MultiVehicleManager-%E2%80%94%E2%80%94-%E5%A4%9A%E8%BD%BD%E5%85%B7%E6%80%BB%E7%AE%A1%E5%AE%B6"><span class="toc-number">2.2.</span> <span class="toc-text">二、MultiVehicleManager —— 多载具总管家</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81Vehicle-%E2%80%94%E2%80%94-%E4%B8%8A%E5%B8%9D%E7%B1%BB"><span class="toc-number">2.3.</span> <span class="toc-text">三、Vehicle —— 上帝类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E6%A0%B8%E5%BF%83%E7%8A%B6%E6%80%81%E5%B1%9E%E6%80%A7%EF%BC%88QML-%E7%9B%B4%E6%8E%A5%E8%AF%BB%EF%BC%89"><span class="toc-number">2.3.1.</span> <span class="toc-text">3.1 核心状态属性（QML 直接读）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E8%81%9A%E5%90%88%E7%9A%84%E5%AD%90%E7%AE%A1%E7%90%86%E5%99%A8%EF%BC%88Vehicle-%E7%9A%84%E2%80%9D%E4%B8%8B%E5%B1%9E%E4%BB%AC%E2%80%9D%EF%BC%89"><span class="toc-number">2.3.2.</span> <span class="toc-text">3.2 聚合的子管理器（Vehicle 的”下属们”）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-3-FactGroup-%E5%AE%B9%E5%99%A8%EF%BC%88%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9A%84-Facts%EF%BC%89"><span class="toc-number">2.3.3.</span> <span class="toc-text">3.3 FactGroup 容器（实时数据的 Facts）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-4-Q-INVOKABLE-%E6%8E%A7%E5%88%B6%E6%96%B9%E6%B3%95%EF%BC%88QML-%E5%8F%AF%E8%B0%83%EF%BC%89"><span class="toc-number">2.3.4.</span> <span class="toc-text">3.4 Q_INVOKABLE 控制方法（QML 可调）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E5%8F%A5%E8%AF%9D%E6%80%BB%E7%BB%93"><span class="toc-number">2.4.</span> <span class="toc-text">四、一句话总结</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/FlyerLink%E5%BD%93%E5%89%8D%E6%9C%AA%E9%97%AD%E7%8E%AF%E7%82%B9%E6%95%B4%E7%90%86/" title="无标题">无标题</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/hello-world/" title="Hello World">Hello World</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我的网页编辑测试"/></a><div class="content"><a class="title" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试">我的网页编辑测试</a><time datetime="2026-08-14T14:15:00.000Z" title="发表于 2026-08-14 14:15:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零搭建 Hexo 博客踩坑记录"/></a><div class="content"><a class="title" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录">从零搭建 Hexo 博客踩坑记录</a><time datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多路视频图传"/></a><div class="content"><a class="title" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传">多路视频图传</a><time datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Li-H</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

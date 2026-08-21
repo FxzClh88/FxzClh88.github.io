@@ -1,0 +1,396 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>06-UI层三大视图 | 丽欢同学 | Li-H</title><meta name="author" content="Li-H"><meta name="copyright" content="Li-H"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="了解代码结构">
+<meta property="og:type" content="article">
+<meta property="og:title" content="06-UI层三大视图">
+<meta property="og:url" content="https://fxzclh88.github.io/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/index.html">
+<meta property="og:site_name" content="丽欢同学 | Li-H">
+<meta property="og:description" content="了解代码结构">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fxzclh88.github.io/img/banner.jpg">
+<meta property="article:published_time" content="2026-08-14T12:00:00.000Z">
+<meta property="article:modified_time" content="2026-08-21T06:54:17.410Z">
+<meta property="article:author" content="Li-H">
+<meta property="article:tag" content="标签1">
+<meta property="article:tag" content="标签2">
+<meta property="article:tag" content="标签3">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fxzclh88.github.io/img/banner.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "06-UI层三大视图",
+  "url": "https://fxzclh88.github.io/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/",
+  "image": "https://fxzclh88.github.io/img/banner.jpg",
+  "datePublished": "2026-08-14T12:00:00.000Z",
+  "dateModified": "2026-08-21T06:54:17.410Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Li-H",
+      "url": "https://FxzClh88.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://fxzclh88.github.io/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '06-UI层三大视图',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/banner.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">丽欢同学 | Li-H</span></a><a class="nav-page-title" href="/"><span class="site-name">06-UI层三大视图</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">06-UI层三大视图</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-21T06:54:17.410Z" title="更新于 2026-08-21 06:54:17">2026-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/QGC/">QGC</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/QGC/UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/">UI层三大视图</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="06-·-UI-层（三大视图-QML-组织）"><a href="#06-·-UI-层（三大视图-QML-组织）" class="headerlink" title="06 · UI 层（三大视图 + QML 组织）"></a>06 · UI 层（三大视图 + QML 组织）</h1><blockquote>
+<p>基于 <code>2.0.5\source\qgroundcontrol\src\MainWindow\</code> 和 <code>src\FlyView\</code></p>
+</blockquote>
+<h2 id="一、UI-层整体结构"><a href="#一、UI-层整体结构" class="headerlink" title="一、UI 层整体结构"></a>一、UI 层整体结构</h2><p>QGC 的 UI 是<strong>纯 QML</strong>，根窗口是 <code>MainWindow.qml</code>（<code>ApplicationWindow</code>）。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">MainWindow.qml（ApplicationWindow 根窗口）</span><br><span class="line"> ├── FlyView（飞行视图，默认显示）★</span><br><span class="line"> ├── PlanView（规划视图，默认隐藏）</span><br><span class="line"> ├── toolDrawer（工具抽屉 → 加载 AnalyzeView / 车辆配置 / 设置）</span><br><span class="line"> └── footer: LogReplayStatusBar（日志回放状态栏）</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键：三大视图不是并列的</strong></p>
+<table>
+<thead>
+<tr>
+<th>视图</th>
+<th>加载方式</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FlyView</td>
+<td>MainWindow 直接子元素，<code>visible</code> 控制</td>
+<td>飞行主界面</td>
+</tr>
+<tr>
+<td>PlanView</td>
+<td>MainWindow 直接子元素，<code>visible</code> 控制</td>
+<td>任务规划</td>
+</tr>
+<tr>
+<td>AnalyzeView</td>
+<td>toolDrawer 的 Loader 动态加载</td>
+<td>日志分析（工具抽屉）</td>
+</tr>
+</tbody></table>
+<p>切换用 <code>showFlyView()</code> &#x2F; <code>showPlanView()</code> &#x2F; <code>showAnalyzeTool()</code>，本质是改 <code>visible</code> + 加载 toolDrawer。</p>
+<h2 id="二、QGCApplication-注入的全局单例"><a href="#二、QGCApplication-注入的全局单例" class="headerlink" title="二、QGCApplication 注入的全局单例"></a>二、QGCApplication 注入的全局单例</h2><p>QML 里到处都能访问 <code>QGroundControl.*</code>，这些是 C++ 侧（QGCApplication）通过 <strong>context property</strong> 注入的单例：</p>
+<table>
+<thead>
+<tr>
+<th>QML 访问</th>
+<th>C++ 类</th>
+<th>用途</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>QGroundControl.multiVehicleManager</code></td>
+<td>MultiVehicleManager</td>
+<td>多载具管理</td>
+</tr>
+<tr>
+<td><code>QGroundControl.linkManager</code></td>
+<td>LinkManager</td>
+<td>链路管理</td>
+</tr>
+<tr>
+<td><code>QGroundControl.videoManager</code></td>
+<td>VideoManager</td>
+<td>视频管理</td>
+</tr>
+<tr>
+<td><code>QGroundControl.settingsManager</code></td>
+<td>AppSettings</td>
+<td>设置</td>
+</tr>
+<tr>
+<td><code>QGroundControl.corePlugin</code></td>
+<td>QGCCorePlugin</td>
+<td>核心插件</td>
+</tr>
+<tr>
+<td><code>QGroundControl.globalPalette</code></td>
+<td>—</td>
+<td>全局配色</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>这就是新版”弱化 QGCToolbox”的体现：不再集中到一个工具箱，而是<strong>各自注册为 QML 单例</strong>，QML 按需访问。</p>
+</blockquote>
+<h2 id="三、QML-模块-URI-组织"><a href="#三、QML-模块-URI-组织" class="headerlink" title="三、QML 模块 URI 组织"></a>三、QML 模块 URI 组织</h2><p>MainWindow.qml 的 import 清单就是模块地图：</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> QGroundControl             <span class="comment">// 核心单例 + 全局对象</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.Controls    <span class="comment">// QmlControls 模块</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.FactControls<span class="comment">// FactSystem 的控件</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.FlyView     <span class="comment">// 飞行视图</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.FlightMap   <span class="comment">// 地图</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.PlanView    <span class="comment">// 规划视图</span></span><br><span class="line"><span class="keyword">import</span> QGroundControl.Toolbar     <span class="comment">// 工具栏</span></span><br></pre></td></tr></table></figure>
+
+<p>每个 <code>import</code> 对应一个 <code>qt_add_qml_module(URI ...)</code>。<strong>旧版没有这套 URI，全靠 <code>.qrc</code> 路径</strong> —— 这是 FlyerLink 迁移 QML 时最麻烦的适配点。</p>
+<h2 id="四、FlyView-的组成（飞行主界面拆解）"><a href="#四、FlyView-的组成（飞行主界面拆解）" class="headerlink" title="四、FlyView 的组成（飞行主界面拆解）"></a>四、FlyView 的组成（飞行主界面拆解）</h2><p>从 <code>src/FlyView/</code> 目录看，飞行视图拆得很细：</p>
+<table>
+<thead>
+<tr>
+<th>组成</th>
+<th>文件</th>
+<th>职责</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主文件</td>
+<td><code>FlyView.qml</code></td>
+<td>组装所有子组件</td>
+</tr>
+<tr>
+<td>视频</td>
+<td><code>FlyViewVideo.qml</code> + <code>FlightDisplayView*.qml</code></td>
+<td>视频显示（<strong>4 种后端</strong>：QtMultimedia&#x2F;UVC&#x2F;Video&#x2F;VideoOutput）</td>
+</tr>
+<tr>
+<td>地图</td>
+<td><code>FlyViewMap.qml</code></td>
+<td>飞行地图</td>
+</tr>
+<tr>
+<td>工具条</td>
+<td><code>FlyViewToolStrip.qml</code> + <code>FlyViewToolStripActionList.qml</code></td>
+<td>右侧动作按钮列</td>
+</tr>
+<tr>
+<td>控件层</td>
+<td><code>FlyViewWidgetLayer.qml</code> &#x2F; <code>FlyViewCustomLayer.qml</code></td>
+<td>自定义控件层（<strong>FlyerLink 定制挂载点</strong>）</td>
+</tr>
+<tr>
+<td>多机列表</td>
+<td><code>MultiVehicleList.qml</code></td>
+<td>多载具列表</td>
+</tr>
+<tr>
+<td>虚拟摇杆</td>
+<td><code>VirtualJoystick.qml</code></td>
+<td>虚拟摇杆（触屏遥控）</td>
+</tr>
+<tr>
+<td>遥测栏</td>
+<td><code>TelemetryValuesBar.qml</code></td>
+<td>底部遥测值</td>
+</tr>
+<tr>
+<td>起飞前检查</td>
+<td><code>PreFlightCheckList.qml</code> + 各 checklist</td>
+<td>检查清单</td>
+</tr>
+<tr>
+<td>引导动作</td>
+<td><code>GuidedActionsController.qml</code> + <code>GuidedAction*</code></td>
+<td>一键起飞&#x2F;降落&#x2F;返航</td>
+</tr>
+<tr>
+<td>避障叠加</td>
+<td><code>ObstacleDistanceOverlay*</code></td>
+<td>避障距离显示</td>
+</tr>
+<tr>
+<td>云台&#x2F;相机</td>
+<td><code>OnScreenGimbalController</code> &#x2F; <code>OnScreenCameraTrackingController</code></td>
+<td>屏幕云台&#x2F;相机跟踪</td>
+</tr>
+</tbody></table>
+<h2 id="五、视频后端的-4-种实现（重点）"><a href="#五、视频后端的-4-种实现（重点）" class="headerlink" title="五、视频后端的 4 种实现（重点）"></a>五、视频后端的 4 种实现（重点）</h2><p><code>FlightDisplayView*.qml</code> 有 4 个变体，这是新版视频系统重构的直接体现：</p>
+<table>
+<thead>
+<tr>
+<th>文件</th>
+<th>后端</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>FlightDisplayViewQtMultimedia.qml</td>
+<td>Qt Multimedia（通用）</td>
+</tr>
+<tr>
+<td>FlightDisplayViewUVC.qml</td>
+<td>UVC（USB 视频类，Android）</td>
+</tr>
+<tr>
+<td>FlightDisplayViewVideo.qml</td>
+<td>自定义视频接收器</td>
+</tr>
+<tr>
+<td>FlightDisplayViewVideoOutput.qml</td>
+<td>视频输出</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>这和 FlyerLink 的 <strong>12 路视频</strong>迁移直接相关——旧版是单一 VideoReceiver 写死多路，新版改成抽象 + 多后端。这是迁移难度最高的一处（详见定制模块《01-多路视频图传》）。</p>
+</blockquote>
+<h2 id="六、UI-层数据流（读-UI-就懂全局）"><a href="#六、UI-层数据流（读-UI-就懂全局）" class="headerlink" title="六、UI 层数据流（读 UI 就懂全局）"></a>六、UI 层数据流（读 UI 就懂全局）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">QML 组件（FlyView/PlanView）</span><br><span class="line">  ↓ 读 Fact/属性</span><br><span class="line">C++ 单例（multiVehicleManager / linkManager / videoManager）</span><br><span class="line">  ↓ 信号/槽</span><br><span class="line">业务管理器（Vehicle / PlanManager / ParameterManager）</span><br><span class="line">  ↓ MAVLink</span><br><span class="line">飞控</span><br></pre></td></tr></table></figure>
+
+<p><strong>双向</strong>：飞控数据通过 <code>valueChanged</code> 等信号自动推到 QML 刷新；用户在 QML 操作通过 Q_INVOKABLE 方法 &#x2F; 信号推回 C++。</p>
+<h2 id="七、对-FlyerLink-的意义（定制挂载点）"><a href="#七、对-FlyerLink-的意义（定制挂载点）" class="headerlink" title="七、对 FlyerLink 的意义（定制挂载点）"></a>七、对 FlyerLink 的意义（定制挂载点）</h2><p>FlyerLink 的 UI 定制主要挂在这些位置：</p>
+<ol>
+<li><strong><code>FlyViewWidgetLayer.qml</code> &#x2F; <code>FlyViewCustomLayer.qml</code></strong> —— 自定义控件层</li>
+<li><strong><code>FlyViewToolStrip</code></strong> —— 自定义工具按钮（对应 <code>CustomPlanMenuButton</code> 等）</li>
+<li><strong>侧边栏 Sidebar</strong> —— FlyerLink 新增（见定制模块）</li>
+<li><strong><code>VirtualJoystick.qml</code></strong> —— 虚拟遥控的官方基座</li>
+</ol>
+<hr>
+<p>✅ <strong>B 部分（框架骨架）完成。</strong> 至此你已能看懂 QGC 的整体数据流：<br><code>飞控 → Comms/MAVLink → Vehicle → FactSystem/MissionManager → QML UI</code></p>
+<p>接下来进入 <strong>A 部分（FlyerLink 定制模块）</strong>，逐个读透 7 大定制的源码逻辑。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://FxzClh88.github.io">Li-H</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fxzclh88.github.io/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/">https://fxzclh88.github.io/2026/08/14/06-UI%E5%B1%82%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://FxzClh88.github.io" target="_blank">丽欢同学 | Li-H</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE1/">标签1</a><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE2/">标签2</a><a class="post-meta__tags" href="/tags/%E6%A0%87%E7%AD%BE3/">标签3</a></div><div class="post-share"><div class="social-share" data-image="/img/banner.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/14/06-%E8%99%9A%E6%8B%9F%E9%81%A5%E6%8E%A7%E9%94%AE%E7%9B%98/" title="虚拟遥控键盘"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">虚拟遥控键盘</div></div><div class="info-2"><div class="info-item-1">06 · 虚拟遥控 &#x2F; 键盘控制 基于 D:\UsefulData\QGC 的 App.SettingsGroup.json、官方 VirtualJoystick.qml、Vehicle::virtualTabletJoystickValue()  一、模块概览FlyerLink 的”虚拟遥控&#x2F;键盘控制”&#x3D; 在屏幕上（或键盘）控制载具移动，核心是官方已有的虚拟摇杆机制，FlyerLink 做了”默认开启 + 独立开关”的定制。 二、底层 API（官方已有）2.1 Vehicle::virtualTabletJoystickValue()12// Vehicle.h 里的 Q_INVOKABLEQ_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);  这是屏幕&#x2F;键盘遥控的最终落点——所有虚拟摇杆输入最终调用这个方法，把 roll&#x2F;pitch&#x2F;yaw&#x2F;thrust 发给飞控。...</div></div></div></a><a class="pagination-related" href="/2026/08/14/05-%E4%BB%BB%E5%8A%A1%E8%A7%84%E5%88%92/" title="任务规划"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">任务规划</div></div><div class="info-2"><div class="info-item-1">05 · 任务规划（PlanManager &#x2F; MissionManager） 基于 2.0.5\source\qgroundcontrol\src\MissionManager\  一、任务模块概览QGC 把”飞控上的任务数据”分成三种，统一管理：    类型 MAV_MISSION_TYPE 管理器 用途    飞行任务 MISSION MissionManager 航点&#x2F;命令序列   地理围栏 FENCE GeoFenceManager 电子围栏（限制飞行范围）   集结点 RALLY RallyPointManager 安全集结点（返航备降点）   二、三合一架构（新版核心重构）1234PlanManager（基类，任务收发状态机） ├── MissionManager（飞行任务） ├── GeoFenceManager（地理围栏） └── RallyPointManager（集结点）  PlanManager 是三者共同基类，用 MAV_MISSION_TYPE _planType 区分类型。三者的收发逻辑完全相同，只是类型不同。这是新版对旧版的一大...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/14/02-MAVLink%E9%80%9A%E4%BF%A1%E5%B1%82/" title="02-MAVLink通信层"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">02-MAVLink通信层</div></div><div class="info-2"><div class="info-item-1">02 · MAVLink 通信层 基于 2.0.5\source\qgroundcontrol\src\Comms\ 和 src\MAVLink\  一、通信层在架构中的位置这是数据从飞控进入 QGC 的第一站。理解它，后面 Vehicle&#x2F;FactSystem 都顺了。 1飞控 ⇄ [物理链路] → LinkManager → MAVLinkProtocol → Vehicle  二、两个目录的分工（新版的重要变化）   目录 内容 角色    src/Comms/ LinkManager、LinkInterface、各链路、MAVLinkProtocol 链路管理 + 协议处理   src/MAVLink/ QGCMAVLink（QML单例）、MAVLinkFTP、ImageProtocolManager MAVLink 工具&#x2F;扩展    ⚠️ 新版变化：旧版的 MAVLinkProtocol 在 src/comm/ 下（Qt5 时代），新版把它合并进了 Comms/ 模块——因为协议处理和链路管理高度耦合。 而 src/MAVLink/QGCMAVLin...</div></div></div></a><a class="pagination-related" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">多路视频图传</div></div><div class="info-2"><div class="info-item-1">01 · 多路视频 &#x2F; 图传系统（12 路） 基于旧版 2.0.5\source\flyerlink\src\VideoManager\VideoManager.h + src\VideoReceiver\⚠️ 这是 FlyerLink 最深度的 C++ 定制，也是迁移难度最高的一处（当前 diff 中未迁移）。  一、模块概览官方 QGC 原生只支持 1-2 路视频（主图传 + 热成像）。FlyerLink 把它扩展成 12 路图传，用于多机&#x2F;多传感器场景（普通镜头、热成像、水下多相机等）。 二、12 路架构（VideoManager.h）2.1 核心：12 个 VideoReceiver 数组123456int videoCounts = 12;                       // 图传数量VideoReceiver* _videoReceiver[12];          // 12 个接收器void*          _videoSink[12];              // 12 个视频 sinkQString        _...</div></div></div></a><a class="pagination-related" href="/2026/08/14/%E4%BB%A3%E7%A0%81%E7%BB%93%E6%9E%84/" title="代码结构"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">代码结构</div></div><div class="info-2"><div class="info-item-1">前言  QGC代码结构的理解   源码目录对照图   目录 属于 干啥的    src&#x2F;FlyView&#x2F; 前端	飞行界面（侧边栏、弹窗、蓝色按钮）    src&#x2F;PlanView&#x2F; 前端	规划页（6 个按钮、文件&#x2F;图案弹窗）    src&#x2F;QmlControls&#x2F; 前端	通用控件库（CustomImageButton 等）    src&#x2F;Toolbar&#x2F; 前端	顶部工具栏（品牌化）    src&#x2F;Settings&#x2F; + AppSettings&#x2F; 后端	配置项系统（你加开关的地方）    src&#x2F;Vehicle&#x2F; 后端	飞机模型（customFlightTime 在这）    src&#x2F;MAVLink&#x2F; 后端	通信协议（和飞机对话的语言）    src&#x2F;Comm&#x2F; 后端	通信链路（串口&#x2F;UDP&#x2F;TCP）    src&#x2F;MissionManager&#x2F; 后端	任务管理（航...</div></div></div></a><a class="pagination-related" href="/2026/08/14/%E9%A3%9E%E8%A1%8C%E9%A1%B53%E4%B8%AA%E6%8C%89%E9%92%AE/" title="飞行页3个按钮"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">飞行页3个按钮</div></div><div class="info-2"><div class="info-item-1">前言飞行页（Fly View）地图顶部的 开始 &#x2F; 任务规划 &#x2F; 返航 3 个蓝色圆形按钮迁移。旧版 FlyerLink 定制功能，新版需重新接入。 一、整体思路1234CustomMenuButton（圆形蓝色按钮控件）× 3  ├── &quot;开始&quot;    → 触发起飞（guidedController）  ├── &quot;任务规划&quot; → 跳转规划页（showPlanView）  └── &quot;返航&quot;    → 触发返航（guidedController） 位置：地图顶部居中，最高层级显示。 二、控件：CustomMenuButton（蓝色圆形的秘密）文件：src&#x2F;QmlControls&#x2F;CustomMenuButton.qml 圆形（第 31 行）： 123456789radius: _rootButton.height / 2     // 圆形 = 半径取高度一半````蓝色背景（第 28 行）——按钮颜色由调用处传入：```qmlbackground: Rectangle &#123;...</div></div></div></a><a class="pagination-related" href="/2026/08/14/%E5%90%AF%E5%8A%A8%E5%8A%A8%E7%94%BB/" title="启动动画"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">启动动画</div></div><div class="info-2"><div class="info-item-1">前言开头动画 一、🔍 旧版启动动画是怎么实现的位置：旧版 src&#x2F;QGCApplication.cc 构造函数（第 202-211 行） 123456QLabel *label = new QLabel();QMovie *movie = new QMovie(&quot;:/res/resources/donghua.gif&quot;);  // 播放 GIFlabel-&gt;setMovie(movie);movie-&gt;start();label-&gt;showFullScreen();                                     // 全屏QTimer::singleShot(5000, label, SLOT(close()));              // 5 秒后关闭 动画资源：旧版&#x2F;resources&#x2F;donghua.gif（飞行者图标动画） 二、⚠️ 不能直接照搬新版 QGC 是 QGuiApplication（纯 QML 架构旧版用的 QLabel + QMovie 是 Qt Widge...</div></div></div></a><a class="pagination-related" href="/2026/08/14/06-%E8%99%9A%E6%8B%9F%E9%81%A5%E6%8E%A7%E9%94%AE%E7%9B%98/" title="虚拟遥控键盘"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">虚拟遥控键盘</div></div><div class="info-2"><div class="info-item-1">06 · 虚拟遥控 &#x2F; 键盘控制 基于 D:\UsefulData\QGC 的 App.SettingsGroup.json、官方 VirtualJoystick.qml、Vehicle::virtualTabletJoystickValue()  一、模块概览FlyerLink 的”虚拟遥控&#x2F;键盘控制”&#x3D; 在屏幕上（或键盘）控制载具移动，核心是官方已有的虚拟摇杆机制，FlyerLink 做了”默认开启 + 独立开关”的定制。 二、底层 API（官方已有）2.1 Vehicle::virtualTabletJoystickValue()12// Vehicle.h 里的 Q_INVOKABLEQ_INVOKABLE void virtualTabletJoystickValue(double roll, double pitch, double yaw, double thrust);  这是屏幕&#x2F;键盘遥控的最终落点——所有虚拟摇杆输入最终调用这个方法，把 roll&#x2F;pitch&#x2F;yaw&#x2F;thrust 发给飞控。...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Li-H</div><div class="author-info-description">我的技术学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#06-%C2%B7-UI-%E5%B1%82%EF%BC%88%E4%B8%89%E5%A4%A7%E8%A7%86%E5%9B%BE-QML-%E7%BB%84%E7%BB%87%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">06 · UI 层（三大视图 + QML 组织）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81UI-%E5%B1%82%E6%95%B4%E4%BD%93%E7%BB%93%E6%9E%84"><span class="toc-number">1.1.</span> <span class="toc-text">一、UI 层整体结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81QGCApplication-%E6%B3%A8%E5%85%A5%E7%9A%84%E5%85%A8%E5%B1%80%E5%8D%95%E4%BE%8B"><span class="toc-number">1.2.</span> <span class="toc-text">二、QGCApplication 注入的全局单例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81QML-%E6%A8%A1%E5%9D%97-URI-%E7%BB%84%E7%BB%87"><span class="toc-number">1.3.</span> <span class="toc-text">三、QML 模块 URI 组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81FlyView-%E7%9A%84%E7%BB%84%E6%88%90%EF%BC%88%E9%A3%9E%E8%A1%8C%E4%B8%BB%E7%95%8C%E9%9D%A2%E6%8B%86%E8%A7%A3%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">四、FlyView 的组成（飞行主界面拆解）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E8%A7%86%E9%A2%91%E5%90%8E%E7%AB%AF%E7%9A%84-4-%E7%A7%8D%E5%AE%9E%E7%8E%B0%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">五、视频后端的 4 种实现（重点）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81UI-%E5%B1%82%E6%95%B0%E6%8D%AE%E6%B5%81%EF%BC%88%E8%AF%BB-UI-%E5%B0%B1%E6%87%82%E5%85%A8%E5%B1%80%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">六、UI 层数据流（读 UI 就懂全局）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%83%E3%80%81%E5%AF%B9-FlyerLink-%E7%9A%84%E6%84%8F%E4%B9%89%EF%BC%88%E5%AE%9A%E5%88%B6%E6%8C%82%E8%BD%BD%E7%82%B9%EF%BC%89"><span class="toc-number">1.7.</span> <span class="toc-text">七、对 FlyerLink 的意义（定制挂载点）</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/FlyerLink%E5%BD%93%E5%89%8D%E6%9C%AA%E9%97%AD%E7%8E%AF%E7%82%B9%E6%95%B4%E7%90%86/" title="无标题">无标题</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/hello-world/" title="Hello World">Hello World</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我的网页编辑测试"/></a><div class="content"><a class="title" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试">我的网页编辑测试</a><time datetime="2026-08-14T14:15:00.000Z" title="发表于 2026-08-14 14:15:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零搭建 Hexo 博客踩坑记录"/></a><div class="content"><a class="title" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录">从零搭建 Hexo 博客踩坑记录</a><time datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多路视频图传"/></a><div class="content"><a class="title" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传">多路视频图传</a><time datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Li-H</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

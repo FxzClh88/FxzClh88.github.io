@@ -1,0 +1,320 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>侧边栏迁移 | 丽欢同学 | Li-H</title><meta name="author" content="Li-H"><meta name="copyright" content="Li-H"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="侧边栏模块开发记录：Sidebar.qml 的 8 个功能按钮与对应配置项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="侧边栏迁移">
+<meta property="og:url" content="https://fxzclh88.github.io/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/index.html">
+<meta property="og:site_name" content="丽欢同学 | Li-H">
+<meta property="og:description" content="侧边栏模块开发记录：Sidebar.qml 的 8 个功能按钮与对应配置项">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fxzclh88.github.io/img/banner.jpg">
+<meta property="article:published_time" content="2026-08-14T10:46:59.000Z">
+<meta property="article:modified_time" content="2026-08-21T06:54:17.410Z">
+<meta property="article:author" content="Li-H">
+<meta property="article:tag" content="侧边栏">
+<meta property="article:tag" content="QML">
+<meta property="article:tag" content="无人机">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fxzclh88.github.io/img/banner.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "侧边栏迁移",
+  "url": "https://fxzclh88.github.io/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/",
+  "image": "https://fxzclh88.github.io/img/banner.jpg",
+  "datePublished": "2026-08-14T10:46:59.000Z",
+  "dateModified": "2026-08-21T06:54:17.410Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Li-H",
+      "url": "https://FxzClh88.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://fxzclh88.github.io/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '侧边栏迁移',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/banner.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">丽欢同学 | Li-H</span></a><a class="nav-page-title" href="/"><span class="site-name">侧边栏迁移</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">侧边栏迁移</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-14T10:46:59.000Z" title="发表于 2026-08-14 10:46:59">2026-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-21T06:54:17.410Z" title="更新于 2026-08-21 06:54:17">2026-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/FlyerLink/">FlyerLink</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/FlyerLink/%E4%BE%A7%E8%BE%B9%E6%A0%8F/">侧边栏</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>飞行页侧边栏是屏幕左侧一条竖着的功能栏，有 8 个功能按钮，点一下开关对应功能，长按弹出设置窗。8 个功能：声呐 &#x2F; 3D模型 &#x2F; 深度图 &#x2F; 视频 &#x2F; 罗盘 &#x2F; 虚拟遥控 &#x2F; 相机 &#x2F; 遥测。</p>
+<h2 id="一、整体思路（一个按钮-三件套）"><a href="#一、整体思路（一个按钮-三件套）" class="headerlink" title="一、整体思路（一个按钮 &#x3D; 三件套）"></a>一、整体思路（一个按钮 &#x3D; 三件套）</h2><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">① 开关（配置项）→ ② 按钮 enable 绑定 → ③ 显示组件 visible 绑定</span><br></pre></td></tr></table></figure>
+<p>每个功能按钮通过 “<strong>功能开关套路</strong>“ 工作：</p>
+<p>开关：App.SettingsGroup.json 定义（bool）<br>按钮：Sidebar.qml 的 enable 字段绑定开关（点击切换）<br>显示：对应功能组件的 visible 绑定开关</p>
+<p>长按按钮（url 非空）则弹出设置窗（弹窗是独立 Window）。</p>
+<h2 id="二、Sidebar-qml-主体（8-按钮的”户口本”）"><a href="#二、Sidebar-qml-主体（8-按钮的”户口本”）" class="headerlink" title="二、Sidebar.qml 主体（8 按钮的”户口本”）"></a>二、Sidebar.qml 主体（8 按钮的”户口本”）</h2><p>文件：src&#x2F;FlyView&#x2F;Sidebar.qml 第 36-45 行（activeList 数组）：</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">property</span><span class="string"> var activeList</span>: [</span><br><span class="line">    &#123; <span class="attribute">icon</span>: <span class="string">&quot;qrc:/qmlimages/DvlSonar.svg&quot;</span>,        <span class="attribute">name</span>: <span class="string">&quot;Sonar&amp;Dvl&quot;</span>,      <span class="attribute">id:</span><span class="string"> &quot;dSr</span><span class="string">&quot;, enable: &quot;</span><span class="string">&quot;, url: &quot;</span>DvlSonar.qml<span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/model3d.svg<span class="string">&quot;,         name: &quot;</span>Modul3D<span class="string">&quot;,        id: &quot;</span>Mdl<span class="string">&quot;, enable: &quot;</span><span class="string">&quot;, url: &quot;</span>Setting3DModel.qml<span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/depthMapChart.svg<span class="string">&quot;,   name: &quot;</span>depthMap<span class="string">&quot;,       id: &quot;</span>dpm<span class="string">&quot;, enable: &quot;</span>…depthMap.rawValue<span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/shipin.svg<span class="string">&quot;,          name: &quot;</span>video<span class="string">&quot;,          id: &quot;</span>vdo<span class="string">&quot;, enable: &quot;</span>…videoEnable.rawValue<span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/statistics-meter.svg<span class="string">&quot;,name: &quot;</span>compass<span class="string">&quot;,        id: &quot;</span>cps<span class="string">&quot;, enable: &quot;</span>…compassEnable.rawValue<span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/youxishoubing.svg<span class="string">&quot;,   name: &quot;</span>VirtualHandle<span class="string">&quot;,  id: &quot;</span>vrh<span class="string">&quot;, enable: &quot;</span>…virtualControllerEnable.rawValue<span class="string">&quot;, url: &quot;</span>VirtualController.qml<span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/zhaoxiangji.svg<span class="string">&quot;,     name: &quot;</span>camera<span class="string">&quot;,         id: &quot;</span>cma<span class="string">&quot;, enable: &quot;</span>…cameraEnable.rawValue<span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">    &#123; icon: &quot;</span><span class="attribute">qrc</span>:/qmlimages/telemetryIcon.svg<span class="string">&quot;,   name: &quot;</span>telemetry<span class="string">&quot;,      id: &quot;</span>tey<span class="string">&quot;, enable: &quot;</span>…telemetryEnable.rawValue<span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;</span></span><br><span class="line"><span class="string">]</span></span><br></pre></td></tr></table></figure>
+<p><strong>交互逻辑：</strong></p>
+<p>单击：toggleActivation(id) + 翻转开关值（setPropertyByPath）<br>长按：url 非空 → Qt.createComponent(url) 创建弹窗</p>
+<h2 id="三、7-个功能逐一明细"><a href="#三、7-个功能逐一明细" class="headerlink" title="三、7 个功能逐一明细"></a>三、7 个功能逐一明细</h2><table>
+<thead>
+<tr>
+<th>功能</th>
+<th>开关配置项</th>
+<th>按钮绑定</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>声呐</td>
+<td>DvlSonar.qml</td>
+<td>UdpSender 后端（已迁）</td>
+</tr>
+<tr>
+<td>模型(3D)</td>
+<td>view3DStatus</td>
+<td>配置项已加</td>
+</tr>
+<tr>
+<td>深度图</td>
+<td>depthMap</td>
+<td>✅ 绑定</td>
+</tr>
+<tr>
+<td>视频</td>
+<td>videoEnable</td>
+<td>✅ 绑定</td>
+</tr>
+<tr>
+<td>罗盘</td>
+<td>compassEnable</td>
+<td>✅ 绑定</td>
+</tr>
+<tr>
+<td>虚拟遥控</td>
+<td>virtualControllerEnable</td>
+<td>✅ 绑定</td>
+</tr>
+<tr>
+<td>相机</td>
+<td>cameraEnable</td>
+<td>✅ 绑定</td>
+</tr>
+<tr>
+<td>遥测</td>
+<td>telemetryEnable</td>
+<td>✅ 绑定</td>
+</tr>
+</tbody></table>
+<h2 id="四、（举例：罗盘）"><a href="#四、（举例：罗盘）" class="headerlink" title="四、（举例：罗盘）"></a>四、（举例：罗盘）</h2><h2 id="4-1-第一步-给新版的AppSetting-加开关-compassEnable（3处小改）"><a href="#4-1-第一步-给新版的AppSetting-加开关-compassEnable（3处小改）" class="headerlink" title="4.1 第一步 给新版的AppSetting 加开关 compassEnable（3处小改）"></a>4.1 第一步 给新版的AppSetting 加开关 compassEnable（3处小改）</h2><p>文件 1：src\Settings\App.SettingsGroup.json —— （210-216行）找一个配置项后面加：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span>             <span class="string">&quot;compassEnable&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;shortDesc&quot;</span><span class="punctuation">:</span>        <span class="string">&quot;compass enable&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;longDesc&quot;</span><span class="punctuation">:</span>         <span class="string">&quot;compass enable&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span>             <span class="string">&quot;bool&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;default&quot;</span><span class="punctuation">:</span>          <span class="literal"><span class="keyword">false</span></span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-2-第-2-步：填上侧边栏罗盘按钮的绑定"><a href="#4-2-第-2-步：填上侧边栏罗盘按钮的绑定" class="headerlink" title="4.2 第 2 步：填上侧边栏罗盘按钮的绑定"></a>4.2 第 2 步：填上侧边栏罗盘按钮的绑定</h3><p>文件：src\FlyView\Sidebar.qml 第 49 行</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 现在</span></span><br><span class="line">&#123; <span class="attribute">icon</span>: <span class="string">&quot;...statistics-meter.svg&quot;</span>, <span class="attribute">name</span>: <span class="string">&quot;compass&quot;</span>, <span class="attribute">id:</span><span class="string"> &quot;cps</span><span class="string">&quot;, enable: &quot;</span> <span class="string">&quot;, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br><span class="line"><span class="string">// 改成</span></span><br><span class="line"><span class="string">&#123; icon: &quot;</span>...statistics-meter.svg<span class="string">&quot;, name: &quot;</span>compass<span class="string">&quot;, id: &quot;</span>cps<span class="string">&quot;, **enable: &quot;</span>settingsManager.appSettings.compassEnable.rawValue<span class="string">&quot;**, url: &quot;</span><span class="string">&quot; &#125;,</span></span><br></pre></td></tr></table></figure>
+<h3 id="4-3-第-3-步：让新版罗盘显示跟着开关走"><a href="#4-3-第-3-步：让新版罗盘显示跟着开关走" class="headerlink" title="4.3 第 3 步：让新版罗盘显示跟着开关走"></a>4.3 第 3 步：让新版罗盘显示跟着开关走</h3><p>文件：src\FlyView\FlyViewBottomRightRowLayout.qml 第 19 行</p>
+<figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 现在</span></span><br><span class="line"><span class="attribute">visible</span>: QGroundControl.corePlugin.options.flyView.showInstrumentPanel &amp;&amp; _showSingleVehicleUI</span><br><span class="line"><span class="comment">// 改成（加一个开关条件）</span></span><br><span class="line"><span class="attribute">visible</span>: QGroundControl.corePlugin.options.flyView.showInstrumentPanel &amp;&amp; _showSingleVehicleUI &amp;&amp; QGroundControl.settingsManager.appSettings.compassEnable.rawValue</span><br></pre></td></tr></table></figure>
+<h2 id="五、长按弹窗机制（Sidebar-qml-第-165-176-行）"><a href="#五、长按弹窗机制（Sidebar-qml-第-165-176-行）" class="headerlink" title="五、长按弹窗机制（Sidebar.qml 第 165-176 行）"></a>五、长按弹窗机制（Sidebar.qml 第 165-176 行）</h2><figure class="highlight qml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">onPressAndHold</span>: (mouse) =&gt; &#123;</span><br><span class="line">    <span class="keyword">if</span> (mouse.button === Qt.LeftButton &amp;&amp; modelData.url !== <span class="string">&quot;&quot;</span>) &#123;</span><br><span class="line">        <span class="keyword">var</span> comp = Qt.createComponent(modelData.url)   <span class="comment">// 动态加载弹窗</span></span><br><span class="line">        <span class="keyword">if</span> (comp.status === Component.Ready) &#123;</span><br><span class="line">            <span class="keyword">var</span> win = comp.createObject()</span><br><span class="line">            <span class="keyword">if</span> (win) win.show()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="六、改动文件清单"><a href="#六、改动文件清单" class="headerlink" title="六、改动文件清单"></a>六、改动文件清单</h2><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>改动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>src&#x2F;FlyView&#x2F;Sidebar.qml</td>
+<td>8 按钮 activeList + enable 绑定 + 长按弹窗</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;DvlSonar.qml</td>
+<td>声呐弹窗（+UdpSender 后端）</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;Setting3DModel.qml &#x2F; View3DModel.qml</td>
+<td>3D 模型弹窗&#x2F;显示</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;VirtualController.qml</td>
+<td>虚拟遥控弹窗</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;DepthMap.qml</td>
+<td>深度图显示组件（8&#x2F;17 新增）</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;FlyView.qml</td>
+<td>挂载 DepthMap + 视频 item2 条件</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;FlyViewWidgetLayer.qml</td>
+<td>罗盘&#x2F;虚拟遥控&#x2F;3D 显示绑定</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;FlyViewBottomRightRowLayout.qml</td>
+<td>遥测显示绑定</td>
+</tr>
+<tr>
+<td>src&#x2F;FlyView&#x2F;FlyViewTopRightColumnLayout.qml</td>
+<td>相机显示绑定</td>
+</tr>
+<tr>
+<td>src&#x2F;Settings&#x2F;App.SettingsGroup.json + AppSettings.h&#x2F;.cc</td>
+<td>8 个开关配置项</td>
+</tr>
+</tbody></table>
+<h2 id="总结：①-加开关配置-→-②-填按钮-enable-→-③-让对应组件-visible-绑定开关"><a href="#总结：①-加开关配置-→-②-填按钮-enable-→-③-让对应组件-visible-绑定开关" class="headerlink" title="总结：① 加开关配置 → ② 填按钮 enable → ③ 让对应组件 visible 绑定开关"></a>总结：① 加开关配置 → ② 填按钮 enable → ③ 让对应组件 visible 绑定开关</h2></article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://FxzClh88.github.io">Li-H</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fxzclh88.github.io/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/">https://fxzclh88.github.io/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://FxzClh88.github.io" target="_blank">丽欢同学 | Li-H</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E4%BE%A7%E8%BE%B9%E6%A0%8F/">侧边栏</a><a class="post-meta__tags" href="/tags/QML/">QML</a><a class="post-meta__tags" href="/tags/%E6%97%A0%E4%BA%BA%E6%9C%BA/">无人机</a></div><div class="post-share"><div class="social-share" data-image="/img/banner.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related full-width" href="/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/" title="键盘控制后端迁移"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">键盘控制后端迁移</div></div><div class="info-2"><div class="info-item-1">键盘控制后端迁移开发日志（2026-08-20）前言旧版 FlyerLink 虚拟遥控有「键盘」模式（W&#x2F;A&#x2F;S&#x2F;D 控制飞机移动，O&#x2F;P 解锁），新版 QGC 源码里没有这个后端。本次任务：把键盘控制后端（KeyboardControlManager &#x2F; KeyboardController）从旧版迁到新版，并接入遥控配置弹窗。 一、改动文件清单（8 个）   文件 操作 说明    src/Joystick/KeyboardControlManager.h 新增 总控（全局拦截 + 开关），单例改造   src/Joystick/KeyboardControlManager.cpp 新增 同上实现   src/Joystick/KeyboardController.h 复制旧版+补 include 按键→动作映射核心   src/Joystick/KeyboardController.cpp 复制+适配 适配新版 Vehicle 接口   src/Joystick/CMakeLists.txt 改 注册 4 个文件   src...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/" title="键盘控制后端迁移"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">键盘控制后端迁移</div></div><div class="info-2"><div class="info-item-1">键盘控制后端迁移开发日志（2026-08-20）前言旧版 FlyerLink 虚拟遥控有「键盘」模式（W&#x2F;A&#x2F;S&#x2F;D 控制飞机移动，O&#x2F;P 解锁），新版 QGC 源码里没有这个后端。本次任务：把键盘控制后端（KeyboardControlManager &#x2F; KeyboardController）从旧版迁到新版，并接入遥控配置弹窗。 一、改动文件清单（8 个）   文件 操作 说明    src/Joystick/KeyboardControlManager.h 新增 总控（全局拦截 + 开关），单例改造   src/Joystick/KeyboardControlManager.cpp 新增 同上实现   src/Joystick/KeyboardController.h 复制旧版+补 include 按键→动作映射核心   src/Joystick/KeyboardController.cpp 复制+适配 适配新版 Vehicle 接口   src/Joystick/CMakeLists.txt 改 注册 4 个文件   src...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Li-H</div><div class="author-info-description">我的技术学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%95%B4%E4%BD%93%E6%80%9D%E8%B7%AF%EF%BC%88%E4%B8%80%E4%B8%AA%E6%8C%89%E9%92%AE-%E4%B8%89%E4%BB%B6%E5%A5%97%EF%BC%89"><span class="toc-number">2.</span> <span class="toc-text">一、整体思路（一个按钮 &#x3D; 三件套）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Sidebar-qml-%E4%B8%BB%E4%BD%93%EF%BC%888-%E6%8C%89%E9%92%AE%E7%9A%84%E2%80%9D%E6%88%B7%E5%8F%A3%E6%9C%AC%E2%80%9D%EF%BC%89"><span class="toc-number">3.</span> <span class="toc-text">二、Sidebar.qml 主体（8 按钮的”户口本”）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%817-%E4%B8%AA%E5%8A%9F%E8%83%BD%E9%80%90%E4%B8%80%E6%98%8E%E7%BB%86"><span class="toc-number">4.</span> <span class="toc-text">三、7 个功能逐一明细</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%EF%BC%88%E4%B8%BE%E4%BE%8B%EF%BC%9A%E7%BD%97%E7%9B%98%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">四、（举例：罗盘）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4-1-%E7%AC%AC%E4%B8%80%E6%AD%A5-%E7%BB%99%E6%96%B0%E7%89%88%E7%9A%84AppSetting-%E5%8A%A0%E5%BC%80%E5%85%B3-compassEnable%EF%BC%883%E5%A4%84%E5%B0%8F%E6%94%B9%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">4.1 第一步 给新版的AppSetting 加开关 compassEnable（3处小改）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#4-2-%E7%AC%AC-2-%E6%AD%A5%EF%BC%9A%E5%A1%AB%E4%B8%8A%E4%BE%A7%E8%BE%B9%E6%A0%8F%E7%BD%97%E7%9B%98%E6%8C%89%E9%92%AE%E7%9A%84%E7%BB%91%E5%AE%9A"><span class="toc-number">6.1.</span> <span class="toc-text">4.2 第 2 步：填上侧边栏罗盘按钮的绑定</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4-3-%E7%AC%AC-3-%E6%AD%A5%EF%BC%9A%E8%AE%A9%E6%96%B0%E7%89%88%E7%BD%97%E7%9B%98%E6%98%BE%E7%A4%BA%E8%B7%9F%E7%9D%80%E5%BC%80%E5%85%B3%E8%B5%B0"><span class="toc-number">6.2.</span> <span class="toc-text">4.3 第 3 步：让新版罗盘显示跟着开关走</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%95%BF%E6%8C%89%E5%BC%B9%E7%AA%97%E6%9C%BA%E5%88%B6%EF%BC%88Sidebar-qml-%E7%AC%AC-165-176-%E8%A1%8C%EF%BC%89"><span class="toc-number">7.</span> <span class="toc-text">五、长按弹窗机制（Sidebar.qml 第 165-176 行）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%94%B9%E5%8A%A8%E6%96%87%E4%BB%B6%E6%B8%85%E5%8D%95"><span class="toc-number">8.</span> <span class="toc-text">六、改动文件清单</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93%EF%BC%9A%E2%91%A0-%E5%8A%A0%E5%BC%80%E5%85%B3%E9%85%8D%E7%BD%AE-%E2%86%92-%E2%91%A1-%E5%A1%AB%E6%8C%89%E9%92%AE-enable-%E2%86%92-%E2%91%A2-%E8%AE%A9%E5%AF%B9%E5%BA%94%E7%BB%84%E4%BB%B6-visible-%E7%BB%91%E5%AE%9A%E5%BC%80%E5%85%B3"><span class="toc-number">9.</span> <span class="toc-text">总结：① 加开关配置 → ② 填按钮 enable → ③ 让对应组件 visible 绑定开关</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/FlyerLink%E5%BD%93%E5%89%8D%E6%9C%AA%E9%97%AD%E7%8E%AF%E7%82%B9%E6%95%B4%E7%90%86/" title="无标题">无标题</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/hello-world/" title="Hello World">Hello World</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我的网页编辑测试"/></a><div class="content"><a class="title" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试">我的网页编辑测试</a><time datetime="2026-08-14T14:15:00.000Z" title="发表于 2026-08-14 14:15:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零搭建 Hexo 博客踩坑记录"/></a><div class="content"><a class="title" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录">从零搭建 Hexo 博客踩坑记录</a><time datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多路视频图传"/></a><div class="content"><a class="title" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传">多路视频图传</a><time datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Li-H</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

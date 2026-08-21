@@ -1,0 +1,377 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>键盘控制后端迁移 | 丽欢同学 | Li-H</title><meta name="author" content="Li-H"><meta name="copyright" content="Li-H"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="侧边栏模块开发记录：Sidebar.qml 的 8 个功能按钮与对应配置项">
+<meta property="og:type" content="article">
+<meta property="og:title" content="键盘控制后端迁移">
+<meta property="og:url" content="https://fxzclh88.github.io/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/index.html">
+<meta property="og:site_name" content="丽欢同学 | Li-H">
+<meta property="og:description" content="侧边栏模块开发记录：Sidebar.qml 的 8 个功能按钮与对应配置项">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fxzclh88.github.io/img/banner.jpg">
+<meta property="article:published_time" content="2026-08-14T10:46:59.000Z">
+<meta property="article:modified_time" content="2026-08-21T06:54:17.410Z">
+<meta property="article:author" content="Li-H">
+<meta property="article:tag" content="QML">
+<meta property="article:tag" content="无人机">
+<meta property="article:tag" content="键盘控制后端迁移">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fxzclh88.github.io/img/banner.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "键盘控制后端迁移",
+  "url": "https://fxzclh88.github.io/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/",
+  "image": "https://fxzclh88.github.io/img/banner.jpg",
+  "datePublished": "2026-08-14T10:46:59.000Z",
+  "dateModified": "2026-08-21T06:54:17.410Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Li-H",
+      "url": "https://FxzClh88.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://fxzclh88.github.io/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '键盘控制后端迁移',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/banner.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">丽欢同学 | Li-H</span></a><a class="nav-page-title" href="/"><span class="site-name">键盘控制后端迁移</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">键盘控制后端迁移</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-14T10:46:59.000Z" title="发表于 2026-08-14 10:46:59">2026-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-21T06:54:17.410Z" title="更新于 2026-08-21 06:54:17">2026-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/FlyerLink/">FlyerLink</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/FlyerLink/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/">键盘控制后端迁移</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="键盘控制后端迁移开发日志（2026-08-20）"><a href="#键盘控制后端迁移开发日志（2026-08-20）" class="headerlink" title="键盘控制后端迁移开发日志（2026-08-20）"></a>键盘控制后端迁移开发日志（2026-08-20）</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>旧版 FlyerLink 虚拟遥控有「键盘」模式（W&#x2F;A&#x2F;S&#x2F;D 控制飞机移动，O&#x2F;P 解锁），新版 QGC 源码里<strong>没有这个后端</strong>。本次任务：把键盘控制后端（<code>KeyboardControlManager</code> &#x2F; <code>KeyboardController</code>）从旧版迁到新版，并接入遥控配置弹窗。</p>
+<h2 id="一、改动文件清单（8-个）"><a href="#一、改动文件清单（8-个）" class="headerlink" title="一、改动文件清单（8 个）"></a>一、改动文件清单（8 个）</h2><table>
+<thead>
+<tr>
+<th>文件</th>
+<th>操作</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>src/Joystick/KeyboardControlManager.h</code></td>
+<td>新增</td>
+<td>总控（全局拦截 + 开关），<strong>单例改造</strong></td>
+</tr>
+<tr>
+<td><code>src/Joystick/KeyboardControlManager.cpp</code></td>
+<td>新增</td>
+<td>同上实现</td>
+</tr>
+<tr>
+<td><code>src/Joystick/KeyboardController.h</code></td>
+<td>复制旧版+补 include</td>
+<td>按键→动作映射核心</td>
+</tr>
+<tr>
+<td><code>src/Joystick/KeyboardController.cpp</code></td>
+<td>复制+适配</td>
+<td>适配新版 Vehicle 接口</td>
+</tr>
+<tr>
+<td><code>src/Joystick/CMakeLists.txt</code></td>
+<td>改</td>
+<td>注册 4 个文件</td>
+</tr>
+<tr>
+<td><code>src/API/QGCCorePlugin.cc</code></td>
+<td>改</td>
+<td>include + <code>setContextProperty</code> 注册成 QML 全局对象</td>
+</tr>
+<tr>
+<td><code>src/FlyView/VirtualController.qml</code></td>
+<td>改</td>
+<td>单选枚举值修复 + 键盘开关接入</td>
+</tr>
+<tr>
+<td><code>src/FlyView/FlyViewWidgetLayer.qml</code></td>
+<td>改</td>
+<td>按键事件（后被全局拦截取代）</td>
+</tr>
+</tbody></table>
+<h2 id="二、关键改造点"><a href="#二、关键改造点" class="headerlink" title="二、关键改造点"></a>二、关键改造点</h2><h3 id="1-架构适配：QGCTool-→-单例"><a href="#1-架构适配：QGCTool-→-单例" class="headerlink" title="1. 架构适配：QGCTool → 单例"></a>1. 架构适配：QGCTool → 单例</h3><p>旧版继承 <code>QGCTool</code>（靠 QGCToolbox 管理），<strong>新版 QGCToolbox 已移除</strong>。参照新版 <code>JoystickManager</code> 改成单例：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">KeyboardControlManager</span> : <span class="keyword">public</span> QObject</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function">Q_OBJECT</span></span><br><span class="line"><span class="function">    <span class="title">Q_PROPERTY</span><span class="params">(<span class="type">bool</span> enabled READ enabled WRITE setEnabled NOTIFY enabledChanged)</span></span></span><br><span class="line"><span class="function"><span class="keyword">public</span>:</span></span><br><span class="line"><span class="function">    static KeyboardControlManager *instance();</span>   <span class="comment">// 单例</span></span><br><span class="line">    <span class="function"><span class="type">bool</span> <span class="title">eventFilter</span><span class="params">(QObject* obj, QEvent* event)</span> <span class="keyword">override</span></span>;  <span class="comment">// 全局键盘拦截</span></span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>构造函数里：<code>qApp-&gt;installEventFilter(this)</code> + connect <code>MultiVehicleManager::instance()-&gt;activeVehicleChanged</code>。</p>
+<h3 id="2-Vehicle-接口适配（核心优先策略）"><a href="#2-Vehicle-接口适配（核心优先策略）" class="headerlink" title="2. Vehicle 接口适配（核心优先策略）"></a>2. Vehicle 接口适配（核心优先策略）</h3><table>
+<thead>
+<tr>
+<th>旧版调用</th>
+<th>新版情况</th>
+<th>处理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>sendJoystickDataThreadSafe(5 参数)</code></td>
+<td><strong>14 参数</strong>（多 buttons2 + 扩展）</td>
+<td>末尾补 9 个 <code>0</code></td>
+</tr>
+<tr>
+<td><code>joystickEnabled()</code></td>
+<td>不存在</td>
+<td>删掉该判断</td>
+</tr>
+<tr>
+<td><code>supportsThrottleModeCenterZero()</code></td>
+<td>不存在</td>
+<td>油门统一 <code>[-1,1]→[0,1]</code></td>
+</tr>
+<tr>
+<td><code>setGripperAction()</code> &#x2F; <code>centerGimbal()</code> 等</td>
+<td>移到 GimbalController &#x2F; 改名</td>
+<td><strong>注释掉，留 TODO</strong>（次要功能后补）</td>
+</tr>
+</tbody></table>
+<h2 id="三、踩坑记录（重点）"><a href="#三、踩坑记录（重点）" class="headerlink" title="三、踩坑记录（重点）"></a>三、踩坑记录（重点）</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>问题现象</th>
+<th>原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>编译报错 <code>C2660: 函数不接受 15 个参数</code></td>
+<td><code>sendJoystickDataThreadSafe</code> 新版是 <strong>14 参数</strong>，我数错多补了一个 0</td>
+<td>删掉末尾一个 <code>, 0</code></td>
+</tr>
+<tr>
+<td>2</td>
+<td>按键没反应，QML 的 <code>KEY PRESSED</code> 日志不出现</td>
+<td>QML 焦点机制不可靠：<code>FlyViewWidgetLayer</code> 的 <code>Keys</code> 收不到按键（焦点被弹窗&#x2F;地图抢走），<code>forceActiveFocus</code> 也抢不过</td>
+<td><strong>放弃 QML 焦点方案，改用 C++ 全局拦截</strong>：<code>qApp-&gt;installEventFilter</code>，程序级监听所有按键，绕过焦点</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>Warning: Could not attach Keys property to MainWindow... is not an Item</code></td>
+<td>在 <code>ApplicationWindow</code>（MainWindow.qml）上挂 <code>Keys</code>——它是<strong>窗口不是 Item</strong>，挂不上</td>
+<td>删掉 MainWindow 里那两行（QML 里 Keys 只能挂 Item）</td>
+</tr>
+<tr>
+<td>4</td>
+<td>选”键盘”后重开弹窗，默认跳回”游戏手柄”</td>
+<td><code>VirtualController.qml</code> 里 4 个单选 <code>checked</code> 条件**全写成了 <code>value === 0</code>**，选键盘存的也是 0</td>
+<td>枚举值改对：<strong>None&#x3D;0 &#x2F; 游戏手柄&#x3D;1 &#x2F; 虚拟摇杆&#x3D;2 &#x2F; 键盘&#x3D;3</strong></td>
+</tr>
+<tr>
+<td>5</td>
+<td>日志反复 <code>enable keyboard</code> &#x2F; <code>delete keyboard</code> 抖动</td>
+<td>单选值全 0 → radio 状态不稳定，反复触发开关</td>
+<td>同上修复后消失</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>VirtualController.qml:90/115 TypeError</code></td>
+<td>旧代码没判空就访问 <code>globals.activeVehicle</code> &#x2F; 值类型不对</td>
+<td>判空 + 枚举值修复后消失</td>
+</tr>
+<tr>
+<td>7</td>
+<td>编译报 <code>KeyboardController.h</code> 缺类型</td>
+<td>缺 <code>QVector</code> &#x2F; <code>QStringList</code> 头文件</td>
+<td>补 include</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>按键全通但飞机不动</strong></td>
+<td>新版 MockLink 的 <code>_handleManualControl</code>（MockLink.cc:1227）<strong>只打印日志、不模拟运动</strong>——官方新版行为，不是代码问题</td>
+<td>连真机&#x2F;公司设备即可生效</td>
+</tr>
+</tbody></table>
+<h2 id="四、验证结果（全链路铁证）"><a href="#四、验证结果（全链路铁证）" class="headerlink" title="四、验证结果（全链路铁证）"></a>四、验证结果（全链路铁证）</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GLOBAL KEY 87                          ← W 按下，全局拦截捕获</span><br><span class="line">SEND manual: pitch= 0.8 roll= 0 ...    ← 指令带 pitch=0.8 发出（按住持续发）</span><br><span class="line">SEND manual: pitch= 0 ...              ← W 松开，复位</span><br></pre></td></tr></table></figure>
+
+<p>按键 → 拦截 → 动作映射 → <code>sendManualControl</code> → <code>Vehicle::sendJoystickDataThreadSafe</code> → MANUAL_CONTROL 发出，<strong>全部打通</strong>。</p>
+<h2 id="五、遗留事项（TODO）"><a href="#五、遗留事项（TODO）" class="headerlink" title="五、遗留事项（TODO）"></a>五、遗留事项（TODO）</h2><table>
+<thead>
+<tr>
+<th>项</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>云台控制（F1-F7）</td>
+<td>新版移到 <code>GimbalController</code>，待补</td>
+</tr>
+<tr>
+<td>抓钩（C&#x2F;V）</td>
+<td>新版方法名 <code>sendGripperAction</code>，待补</td>
+</tr>
+<tr>
+<td>真机验证</td>
+<td>连真实设备确认实际操控效果</td>
+</tr>
+</tbody></table>
+<h2 id="六、可复用知识"><a href="#六、可复用知识" class="headerlink" title="六、可复用知识"></a>六、可复用知识</h2><ol>
+<li><strong>QML 键盘焦点不可靠 → 用 C++ <code>eventFilter</code> 全局拦截</strong>：<code>qApp-&gt;installEventFilter(this)</code>，在 <code>eventFilter</code> 里判 <code>QEvent::KeyPress/KeyRelease</code>，这是最底层、最稳的方案</li>
+<li><strong><code>Keys</code> 只能挂 Item</strong>，不能挂 <code>ApplicationWindow</code>（窗口）</li>
+<li><strong>新版 QGC 架构</strong>：QGCToolbox 已移除 → 自定义管理器改<strong>单例</strong>（参照 JoystickManager）</li>
+<li><strong>新版 MockLink 不模拟手动飞行</strong>，验证操控链路要用日志证据，别等飞机动</li>
+<li><strong><code>sendJoystickDataThreadSafe</code> 新版是 14 参数</strong>（roll&#x2F;pitch&#x2F;yaw&#x2F;thrust&#x2F;buttons + buttons2 + pitch&#x2F;rollExtension + aux1-6）</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://FxzClh88.github.io">Li-H</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fxzclh88.github.io/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/">https://fxzclh88.github.io/2026/08/14/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://FxzClh88.github.io" target="_blank">丽欢同学 | Li-H</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/QML/">QML</a><a class="post-meta__tags" href="/tags/%E6%97%A0%E4%BA%BA%E6%9C%BA/">无人机</a><a class="post-meta__tags" href="/tags/%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB/">键盘控制后端迁移</a></div><div class="post-share"><div class="social-share" data-image="/img/banner.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">多路视频图传</div></div><div class="info-2"><div class="info-item-1">01 · 多路视频 &#x2F; 图传系统（12 路） 基于旧版 2.0.5\source\flyerlink\src\VideoManager\VideoManager.h + src\VideoReceiver\⚠️ 这是 FlyerLink 最深度的 C++ 定制，也是迁移难度最高的一处（当前 diff 中未迁移）。  一、模块概览官方 QGC 原生只支持 1-2 路视频（主图传 + 热成像）。FlyerLink 把它扩展成 12 路图传，用于多机&#x2F;多传感器场景（普通镜头、热成像、水下多相机等）。 二、12 路架构（VideoManager.h）2.1 核心：12 个 VideoReceiver 数组123456int videoCounts = 12;                       // 图传数量VideoReceiver* _videoReceiver[12];          // 12 个接收器void*          _videoSink[12];              // 12 个视频 sinkQString        _...</div></div></div></a><a class="pagination-related" href="/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/" title="侧边栏迁移"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">侧边栏迁移</div></div><div class="info-2"><div class="info-item-1">前言飞行页侧边栏是屏幕左侧一条竖着的功能栏，有 8 个功能按钮，点一下开关对应功能，长按弹出设置窗。8 个功能：声呐 &#x2F; 3D模型 &#x2F; 深度图 &#x2F; 视频 &#x2F; 罗盘 &#x2F; 虚拟遥控 &#x2F; 相机 &#x2F; 遥测。 一、整体思路（一个按钮 &#x3D; 三件套）1① 开关（配置项）→ ② 按钮 enable 绑定 → ③ 显示组件 visible 绑定 每个功能按钮通过 “功能开关套路“ 工作： 开关：App.SettingsGroup.json 定义（bool）按钮：Sidebar.qml 的 enable 字段绑定开关（点击切换）显示：对应功能组件的 visible 绑定开关 长按按钮（url 非空）则弹出设置窗（弹窗是独立 Window）。 二、Sidebar.qml 主体（8 按钮的”户口本”）文件：src&#x2F;FlyView&#x2F;Sidebar.qml 第 36-45 行（activeList 数组）： 12345678910property var activeList: [    &#123; ico...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2026/08/14/%E4%BE%A7%E8%BE%B9%E6%A0%8F%E8%BF%81%E7%A7%BB/" title="侧边栏迁移"><img class="cover" src="/img/banner.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2026-08-14</div><div class="info-item-2">侧边栏迁移</div></div><div class="info-2"><div class="info-item-1">前言飞行页侧边栏是屏幕左侧一条竖着的功能栏，有 8 个功能按钮，点一下开关对应功能，长按弹出设置窗。8 个功能：声呐 &#x2F; 3D模型 &#x2F; 深度图 &#x2F; 视频 &#x2F; 罗盘 &#x2F; 虚拟遥控 &#x2F; 相机 &#x2F; 遥测。 一、整体思路（一个按钮 &#x3D; 三件套）1① 开关（配置项）→ ② 按钮 enable 绑定 → ③ 显示组件 visible 绑定 每个功能按钮通过 “功能开关套路“ 工作： 开关：App.SettingsGroup.json 定义（bool）按钮：Sidebar.qml 的 enable 字段绑定开关（点击切换）显示：对应功能组件的 visible 绑定开关 长按按钮（url 非空）则弹出设置窗（弹窗是独立 Window）。 二、Sidebar.qml 主体（8 按钮的”户口本”）文件：src&#x2F;FlyView&#x2F;Sidebar.qml 第 36-45 行（activeList 数组）： 12345678910property var activeList: [    &#123; ico...</div></div></div></a></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Li-H</div><div class="author-info-description">我的技术学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E9%94%AE%E7%9B%98%E6%8E%A7%E5%88%B6%E5%90%8E%E7%AB%AF%E8%BF%81%E7%A7%BB%E5%BC%80%E5%8F%91%E6%97%A5%E5%BF%97%EF%BC%882026-08-20%EF%BC%89"><span class="toc-number">1.</span> <span class="toc-text">键盘控制后端迁移开发日志（2026-08-20）</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%94%B9%E5%8A%A8%E6%96%87%E4%BB%B6%E6%B8%85%E5%8D%95%EF%BC%888-%E4%B8%AA%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">一、改动文件清单（8 个）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%85%B3%E9%94%AE%E6%94%B9%E9%80%A0%E7%82%B9"><span class="toc-number">1.3.</span> <span class="toc-text">二、关键改造点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-%E6%9E%B6%E6%9E%84%E9%80%82%E9%85%8D%EF%BC%9AQGCTool-%E2%86%92-%E5%8D%95%E4%BE%8B"><span class="toc-number">1.3.1.</span> <span class="toc-text">1. 架构适配：QGCTool → 单例</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-Vehicle-%E6%8E%A5%E5%8F%A3%E9%80%82%E9%85%8D%EF%BC%88%E6%A0%B8%E5%BF%83%E4%BC%98%E5%85%88%E7%AD%96%E7%95%A5%EF%BC%89"><span class="toc-number">1.3.2.</span> <span class="toc-text">2. Vehicle 接口适配（核心优先策略）</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="toc-number">1.4.</span> <span class="toc-text">三、踩坑记录（重点）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E9%AA%8C%E8%AF%81%E7%BB%93%E6%9E%9C%EF%BC%88%E5%85%A8%E9%93%BE%E8%B7%AF%E9%93%81%E8%AF%81%EF%BC%89"><span class="toc-number">1.5.</span> <span class="toc-text">四、验证结果（全链路铁证）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%81%97%E7%95%99%E4%BA%8B%E9%A1%B9%EF%BC%88TODO%EF%BC%89"><span class="toc-number">1.6.</span> <span class="toc-text">五、遗留事项（TODO）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E5%8F%AF%E5%A4%8D%E7%94%A8%E7%9F%A5%E8%AF%86"><span class="toc-number">1.7.</span> <span class="toc-text">六、可复用知识</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/FlyerLink%E5%BD%93%E5%89%8D%E6%9C%AA%E9%97%AD%E7%8E%AF%E7%82%B9%E6%95%B4%E7%90%86/" title="无标题">无标题</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/hello-world/" title="Hello World">Hello World</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我的网页编辑测试"/></a><div class="content"><a class="title" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试">我的网页编辑测试</a><time datetime="2026-08-14T14:15:00.000Z" title="发表于 2026-08-14 14:15:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零搭建 Hexo 博客踩坑记录"/></a><div class="content"><a class="title" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录">从零搭建 Hexo 博客踩坑记录</a><time datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多路视频图传"/></a><div class="content"><a class="title" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传">多路视频图传</a><time datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Li-H</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>

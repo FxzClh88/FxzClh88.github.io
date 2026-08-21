@@ -1,0 +1,308 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>从零搭建 Hexo 博客踩坑记录 | 丽欢同学 | Li-H</title><meta name="author" content="Li-H"><meta name="copyright" content="Li-H"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="记录用 Hexo + Butterfly + GitHub Pages 搭建个人技术博客的全过程，以及踩过的 8 个坑">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从零搭建 Hexo 博客踩坑记录">
+<meta property="og:url" content="https://fxzclh88.github.io/2026/08/14/hexo-blog-setup-notes/index.html">
+<meta property="og:site_name" content="丽欢同学 | Li-H">
+<meta property="og:description" content="记录用 Hexo + Butterfly + GitHub Pages 搭建个人技术博客的全过程，以及踩过的 8 个坑">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://fxzclh88.github.io/img/banner.jpg">
+<meta property="article:published_time" content="2026-08-14T13:48:00.000Z">
+<meta property="article:modified_time" content="2026-08-21T06:54:17.410Z">
+<meta property="article:author" content="Li-H">
+<meta property="article:tag" content="Hexo">
+<meta property="article:tag" content="GitHub">
+<meta property="article:tag" content="Markdown">
+<meta property="article:tag" content="博客">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://fxzclh88.github.io/img/banner.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "从零搭建 Hexo 博客踩坑记录",
+  "url": "https://fxzclh88.github.io/2026/08/14/hexo-blog-setup-notes/",
+  "image": "https://fxzclh88.github.io/img/banner.jpg",
+  "datePublished": "2026-08-14T13:48:00.000Z",
+  "dateModified": "2026-08-21T06:54:17.410Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Li-H",
+      "url": "https://FxzClh88.github.io"
+    }
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://fxzclh88.github.io/2026/08/14/hexo-blog-setup-notes/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.7.0"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.3.1/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        const data = { value }
+
+        if (ttl != null) {
+          data.expiry = Date.now() + ttl * 86400000
+        }
+
+        localStorage.setItem(key, JSON.stringify(data))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return
+
+        try {
+          const data = JSON.parse(itemStr)
+
+          if (data.expiry && Date.now() > data.expiry) {
+            localStorage.removeItem(key)
+            return
+          }
+
+          return data.value
+        } catch {
+          localStorage.removeItem(key)
+        }
+      }
+    }
+
+    const scriptCache = new Map()
+    const cssCache = new Map()
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => {
+        if (scriptCache.has(url)) {
+          return scriptCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const script = document.createElement('script')
+
+          script.src = url
+          script.async = true
+
+          for (const key in attr) {
+            script.setAttribute(key, attr[key])
+          }
+
+          script.onload = resolve
+          script.onerror = reject
+
+          document.head.appendChild(script)
+        })
+
+        scriptCache.set(url, promise)
+
+        return promise
+      },
+      getCSS: (url, id) => {
+        if (cssCache.has(url)) {
+          return cssCache.get(url)
+        }
+
+        const promise = new Promise((resolve, reject) => {
+          const link = document.createElement('link')
+
+          link.rel = 'stylesheet'
+          link.href = url
+
+          if (id) {
+            link.id = id
+          }
+
+          link.onload = resolve
+          link.onerror = reject
+
+          document.head.appendChild(link)
+        })
+
+        cssCache.set(url, promise)
+
+        return promise
+      },
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
+  
+      
+      const metaThemeColor = document.querySelector('meta[name="theme-color"]')
+      const activateDarkMode = () => {
+        document.documentElement.dataset.theme = 'dark'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.dataset.theme = 'light'
+        if (metaThemeColor !== null) {
+          metaThemeColor.setAttribute('content', '#ffffff')
+        }
+      }
+
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: '从零搭建 Hexo 博客踩坑记录',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 7.3.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/banner.jpg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">丽欢同学 | Li-H</span></a><a class="nav-page-title" href="/"><span class="site-name">从零搭建 Hexo 博客踩坑记录</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-th"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-user"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">从零搭建 Hexo 博客踩坑记录</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-08-21T06:54:17.410Z" title="更新于 2026-08-21 06:54:17">2026-08-21</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0/">学习</a><i class="fas fa-angle-right post-meta-separator"></i><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/%E5%AD%A6%E4%B9%A0/Hexo/">Hexo</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>一直想有个地方记录自己的学习和开发笔记，于是花了半天时间，用 Hexo 搭了个博客并发布到了 GitHub Pages。过程说起来简单，坑倒是踩了不少。这里完整记录下来，方便以后回顾，也希望能帮到同样想搭博客的人。</p>
+<p>博客地址：<a href="https://fxzclh88.github.io/">https://FxzClh88.github.io</a></p>
+<h2 id="一、技术选型"><a href="#一、技术选型" class="headerlink" title="一、技术选型"></a>一、技术选型</h2><table>
+<thead>
+<tr>
+<th>环节</th>
+<th>技术</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>框架</td>
+<td>Hexo 7</td>
+<td>静态博客生成器，Node.js 生态</td>
+</tr>
+<tr>
+<td>主题</td>
+<td>Butterfly 5.7</td>
+<td>高颜值，配置丰富</td>
+</tr>
+<tr>
+<td>托管</td>
+<td>GitHub Pages</td>
+<td>免费，无需服务器</td>
+</tr>
+<tr>
+<td>写作</td>
+<td>Markdown</td>
+<td>纯文本，专注内容</td>
+</tr>
+</tbody></table>
+<h2 id="二、踩坑记录"><a href="#二、踩坑记录" class="headerlink" title="二、踩坑记录"></a>二、踩坑记录</h2><table>
+<thead>
+<tr>
+<th>#</th>
+<th>问题</th>
+<th>原因</th>
+<th>解决方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>改配置后页面无变化</td>
+<td><code>_config.yml</code> 副标题混用中英文引号，YAML 解析失败</td>
+<td>引号统一用英文单引号</td>
+</tr>
+<tr>
+<td>2</td>
+<td>全局 hexo 命令报路径错</td>
+<td>Git Bash 下 npm shim 路径转换错误</td>
+<td>改用本地 node 调用</td>
+</tr>
+<tr>
+<td>3</td>
+<td>改配置总不生效</td>
+<td>旧 hexo server 进程占着 4000 端口没退</td>
+<td>先杀端口进程再重启</td>
+</tr>
+<tr>
+<td>4</td>
+<td>中央副标题不显示</td>
+<td>Butterfly <code>subtitle.enable</code> 默认是 false</td>
+<td>复制 <code>_config.butterfly.yml</code> 并开启</td>
+</tr>
+<tr>
+<td>5</td>
+<td>背景图显示空白</td>
+<td>hexo-server 静态图片有 stream bug</td>
+<td>用 Python http.server 替代</td>
+</tr>
+<tr>
+<td>6</td>
+<td>部署报 trash 错误</td>
+<td>沙箱的删除拦截 shim</td>
+<td>命令前加 <code>NODE_OPTIONS=</code> 绕过</td>
+</tr>
+<tr>
+<td>7</td>
+<td>站点一直 404</td>
+<td>GitHub Pages 功能没启用</td>
+<td>Settings → Pages 手动开启</td>
+</tr>
+<tr>
+<td>8</td>
+<td>HEIC 图片不显示</td>
+<td>浏览器不支持 HEIC 格式</td>
+<td>转成 JPG 再用</td>
+</tr>
+</tbody></table>
+<h2 id="三、几个关键点"><a href="#三、几个关键点" class="headerlink" title="三、几个关键点"></a>三、几个关键点</h2><h3 id="3-1-副标题有「双层配置」，别搞混"><a href="#3-1-副标题有「双层配置」，别搞混" class="headerlink" title="3.1 副标题有「双层配置」，别搞混"></a>3.1 副标题有「双层配置」，别搞混</h3><p>Butterfly 的副标题在两个不同的文件里，作用完全不同：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># _config.yml（站点配置）—— 只用于浏览器标签页标题和 SEO</span></span><br><span class="line"><span class="attr">subtitle:</span> <span class="string">&#x27;Stay hungry, stay foolish.&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># _config.butterfly.yml（主题配置）—— 才真正显示在首页中央</span></span><br><span class="line"><span class="attr">subtitle:</span></span><br><span class="line">  <span class="attr">enable:</span> <span class="literal">true</span></span><br><span class="line">  <span class="attr">sub:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="string">&#x27;Stay hungry, stay foolish.&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-部署命令"><a href="#3-2-部署命令" class="headerlink" title="3.2 部署命令"></a>3.2 部署命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /c/Users/Administrator/myblog &amp;&amp; NODE_OPTIONS= node node_modules/hexo/bin/hexo clean &amp;&amp; NODE_OPTIONS= node node_modules/hexo/bin/hexo generate &amp;&amp; NODE_OPTIONS= node node_modules/hexo/bin/hexo deploy</span><br></pre></td></tr></table></figure>
+
+<h2 id="四、一键更新脚本"><a href="#四、一键更新脚本" class="headerlink" title="四、一键更新脚本"></a>四、一键更新脚本</h2><p>把上面的命令封装成 <code>update-blog.bat</code>，以后双击就能更新博客：</p>
+<figure class="highlight bat"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@<span class="built_in">echo</span> off</span><br><span class="line"><span class="built_in">set</span> NODE_OPTIONS=</span><br><span class="line"><span class="built_in">set</span> NODE=C:\Users\Administrator\.workbuddy\binaries\node\versions\<span class="number">22</span>.<span class="number">22</span>.<span class="number">2</span>\node.exe</span><br><span class="line"><span class="built_in">cd</span> /d C:\Users\Administrator\myblog</span><br><span class="line"><span class="variable">%NODE%</span> node_modules\hexo\bin\hexo clean</span><br><span class="line"><span class="variable">%NODE%</span> node_modules\hexo\bin\hexo generate</span><br><span class="line"><span class="variable">%NODE%</span> node_modules\hexo\bin\hexo deploy</span><br><span class="line"><span class="built_in">pause</span></span><br></pre></td></tr></table></figure>
+
+<p>完整的本地编辑流程（万一你要用）<br>bash</p>
+<h1 id="第-1-步：先拉一下，确保本地是最新的（防冲突）"><a href="#第-1-步：先拉一下，确保本地是最新的（防冲突）" class="headerlink" title="第 1 步：先拉一下，确保本地是最新的（防冲突）"></a>第 1 步：先拉一下，确保本地是最新的（防冲突）</h1><p>cd &#x2F;c&#x2F;Users&#x2F;Administrator&#x2F;myblog<br>git pull origin source</p>
+<h1 id="第-2-步：改你的文章（用编辑器）"><a href="#第-2-步：改你的文章（用编辑器）" class="headerlink" title="第 2 步：改你的文章（用编辑器）"></a>第 2 步：改你的文章（用编辑器）</h1><h1 id="第-3-步：提交-推送"><a href="#第-3-步：提交-推送" class="headerlink" title="第 3 步：提交 + 推送"></a>第 3 步：提交 + 推送</h1><p>git add -A<br>git commit -m “更新文章”<br>git push origin source<br>核心就一条规矩：改之前先 pull，改完之后 push，就像云盘「先下载最新版，改完再上传」一样。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次搭博客最大的体会：静态博客的「好看」背后，都是一行行纯文本的 Markdown 和配置文件。踩坑不可怕，关键是遇到报错别慌，顺着报错信息一层层查，总能找到根源。</p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://FxzClh88.github.io">Li-H</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://fxzclh88.github.io/2026/08/14/hexo-blog-setup-notes/">https://fxzclh88.github.io/2026/08/14/hexo-blog-setup-notes/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://FxzClh88.github.io" target="_blank">丽欢同学 | Li-H</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/Hexo/">Hexo</a><a class="post-meta__tags" href="/tags/GitHub/">GitHub</a><a class="post-meta__tags" href="/tags/Markdown/">Markdown</a><a class="post-meta__tags" href="/tags/%E5%8D%9A%E5%AE%A2/">博客</a></div><div class="post-share"><div class="social-share" data-image="/img/banner.jpg" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">我的网页编辑测试</div></div><div class="info-2"><div class="info-item-1">你好，网页编辑这是我第一次不用本地软件，直接在 GitHub 网页上写的文章。 试试各种格式 无序列表 支持加粗、斜体、行内代码     功能 状态    网页编辑 成功   自动发布 成功    </div></div></div></a><a class="pagination-related" href="/2026/08/14/%E9%A3%9E%E8%A1%8C%E9%A1%B53%E4%B8%AA%E6%8C%89%E9%92%AE/" title="飞行页3个按钮"><img class="cover" src="/img/banner.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">飞行页3个按钮</div></div><div class="info-2"><div class="info-item-1">前言飞行页（Fly View）地图顶部的 开始 &#x2F; 任务规划 &#x2F; 返航 3 个蓝色圆形按钮迁移。旧版 FlyerLink 定制功能，新版需重新接入。 一、整体思路1234CustomMenuButton（圆形蓝色按钮控件）× 3  ├── &quot;开始&quot;    → 触发起飞（guidedController）  ├── &quot;任务规划&quot; → 跳转规划页（showPlanView）  └── &quot;返航&quot;    → 触发返航（guidedController） 位置：地图顶部居中，最高层级显示。 二、控件：CustomMenuButton（蓝色圆形的秘密）文件：src&#x2F;QmlControls&#x2F;CustomMenuButton.qml 圆形（第 31 行）： 123456789radius: _rootButton.height / 2     // 圆形 = 半径取高度一半````蓝色背景（第 28 行）——按钮颜色由调用处传入：```qmlbackground: Rectangle &#123;...</div></div></div></a></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Li-H</div><div class="author-info-description">我的技术学习笔记</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">13</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">20</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/xxxxxx"><i class="fab fa-github"></i><span>Follow Me</span></a></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">This is my Blog</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B"><span class="toc-number">2.</span> <span class="toc-text">一、技术选型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E8%B8%A9%E5%9D%91%E8%AE%B0%E5%BD%95"><span class="toc-number">3.</span> <span class="toc-text">二、踩坑记录</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%87%A0%E4%B8%AA%E5%85%B3%E9%94%AE%E7%82%B9"><span class="toc-number">4.</span> <span class="toc-text">三、几个关键点</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#3-1-%E5%89%AF%E6%A0%87%E9%A2%98%E6%9C%89%E3%80%8C%E5%8F%8C%E5%B1%82%E9%85%8D%E7%BD%AE%E3%80%8D%EF%BC%8C%E5%88%AB%E6%90%9E%E6%B7%B7"><span class="toc-number">4.1.</span> <span class="toc-text">3.1 副标题有「双层配置」，别搞混</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-2-%E9%83%A8%E7%BD%B2%E5%91%BD%E4%BB%A4"><span class="toc-number">4.2.</span> <span class="toc-text">3.2 部署命令</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E4%B8%80%E9%94%AE%E6%9B%B4%E6%96%B0%E8%84%9A%E6%9C%AC"><span class="toc-number">5.</span> <span class="toc-text">四、一键更新脚本</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-1-%E6%AD%A5%EF%BC%9A%E5%85%88%E6%8B%89%E4%B8%80%E4%B8%8B%EF%BC%8C%E7%A1%AE%E4%BF%9D%E6%9C%AC%E5%9C%B0%E6%98%AF%E6%9C%80%E6%96%B0%E7%9A%84%EF%BC%88%E9%98%B2%E5%86%B2%E7%AA%81%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">第 1 步：先拉一下，确保本地是最新的（防冲突）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-2-%E6%AD%A5%EF%BC%9A%E6%94%B9%E4%BD%A0%E7%9A%84%E6%96%87%E7%AB%A0%EF%BC%88%E7%94%A8%E7%BC%96%E8%BE%91%E5%99%A8%EF%BC%89"><span class="toc-number"></span> <span class="toc-text">第 2 步：改你的文章（用编辑器）</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC-3-%E6%AD%A5%EF%BC%9A%E6%8F%90%E4%BA%A4-%E6%8E%A8%E9%80%81"><span class="toc-number"></span> <span class="toc-text">第 3 步：提交 + 推送</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E6%80%BB%E7%BB%93"><span class="toc-number">1.</span> <span class="toc-text">总结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/FlyerLink%E5%BD%93%E5%89%8D%E6%9C%AA%E9%97%AD%E7%8E%AF%E7%82%B9%E6%95%B4%E7%90%86/" title="无标题">无标题</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item no-cover"><div class="content"><a class="title" href="/2026/08/21/hello-world/" title="Hello World">Hello World</a><time datetime="2026-08-21T06:54:17.410Z" title="发表于 2026-08-21 06:54:17">2026-08-21</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="我的网页编辑测试"/></a><div class="content"><a class="title" href="/2026/08/14/my-first-web-edit/" title="我的网页编辑测试">我的网页编辑测试</a><time datetime="2026-08-14T14:15:00.000Z" title="发表于 2026-08-14 14:15:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="从零搭建 Hexo 博客踩坑记录"/></a><div class="content"><a class="title" href="/2026/08/14/hexo-blog-setup-notes/" title="从零搭建 Hexo 博客踩坑记录">从零搭建 Hexo 博客踩坑记录</a><time datetime="2026-08-14T13:48:00.000Z" title="发表于 2026-08-14 13:48:00">2026-08-14</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传"><img src="/img/banner.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="多路视频图传"/></a><div class="content"><a class="title" href="/2026/08/14/01-%E5%A4%9A%E8%B7%AF%E8%A7%86%E9%A2%91%E5%9B%BE%E4%BC%A0/" title="多路视频图传">多路视频图传</a><time datetime="2026-08-14T12:00:00.000Z" title="发表于 2026-08-14 12:00:00">2026-08-14</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Li-H</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 7.3.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.7.0</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.7.0"></script><script src="/js/main.js?v=5.7.0"></script><div class="js-pjax"></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
