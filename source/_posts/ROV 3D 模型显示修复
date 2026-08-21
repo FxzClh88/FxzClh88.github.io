@@ -1,0 +1,75 @@
+---
+title: ROV 3D 模型显示修复
+date: 2026-08-14 12:00:00
+categories: [FlyerLink, ROV 3D 模型显示修复]
+tags: [标签1, 标签2, 标签3]
+description: ROV 3D 模型显示修复
+cover: /img/banner.jpg
+# sticky: 1   # 想置顶就取消这行注释（数字越大越靠前）
+---
+# ROV 3D 模型显示修复开发日志（2026-08-20 ~ 21）
+
+## 前言
+
+代码评审反馈项 #5（P1）：ROV 三维模型仍需交互和姿态校验。实测发现：**模型在弹窗预览能显示，但飞行页永远出不来**——比反馈描述的更严重。
+
+## 一、问题现象
+
+- 侧边栏 Modul3D 按钮单击只变颜色，模型不显示
+- 弹窗预览能显示模型，但飞行页右下角始终没有模型
+- 连带发现：3D 模型方向计算存在参数顺序 bug
+
+## 二、根因分析
+
+**① 开关没有任何写入途径（核心 bug）**
+
+`Sidebar.qml:38` 的 Modul3D 项 `enable: ""`（空）。全源码搜索 `view3DStatus` 只有 4 处：定义（json/h/cc）+ 读取（FlyViewWidgetLayer.qml:171），**没有任何一处写入它** → 开关默认 false 且 UI 无入口打开 → 飞行页模型**永远显示不出来**（不只是"状态不一致"）。
+
+**② Qt.quaternion 参数顺序错误（真 bug）**
+
+`View3DModel.qml:35` 原来是 `Qt.quaternion(x, y, z, w)`。Qt 的定义是 **`Qt.quaternion(scalar, x, y, z)`——第一个参数是标量 w**。原写法把 x 塞进标量位、w 塞进 z 位 → 四元数错乱，模型方向必错。
+
+**③ 显示链路三条件（使用层面）**
+
+`FlyViewWidgetLayer.qml:170`：
+```qml
+modelVisible: _activeVehicle && view3DStatus.value
+```
+必须**同时**满足：① 有活动载具（模拟器算）② 开关为 true。
+
+## 三、修复方案（两处一行修改）
+
+| 文件 | 行 | 修改 |
+|---|---|---|
+| `src/FlyView/Sidebar.qml` | 38 | `enable: ""` → `enable: "settingsManager.appSettings.view3DStatus.rawValue"` |
+| `src/FlyView/View3DModel.qml` | 35 | `Qt.quaternion(x, y, z, w)` → `Qt.quaternion(w, x, y, z)` |
+
+## 四、验证过程（踩坑记录）
+
+| # | 现象 | 原因 | 解决 |
+|---|---|---|---|
+| 1 | 弹窗预览空白 | **模型路径未设置**（显示 `<未设置>`），模型源是空路径 `"file:///"` 无效 | 点「浏览」选 .mesh 文件 |
+| 2 | 预览有模型，飞行页没有 | **没连模拟器**（`_activeVehicle` 为空）| 设置 → Mock Link → Start 连载具 |
+| 3 | 飞行页还是没有 | **侧边栏被收起来了**，点不到 Modul3D 开关 | 点屏幕最左边缘拉出侧边栏 → 单击 Modul3D 变蓝 |
+| 4 | 方向计算参数错 | `Qt.quaternion` 标量位置错 | 按上文修复 ② |
+
+**测试用模型**：旧版 flyerlink 自带的 `C:\APP_bag\QGC_1\2.0.5\source\flyerlink\resources\underwoter_rob.mesh`（.mesh 是外部文件，按绝对路径读取，新旧版通用）。
+
+**最终验证** ✅：弹窗预览显示潜水器模型 + 飞行页右下角模型正常出现。
+
+## 五、遗留事项（待办）
+
+| 项 | 说明 |
+|---|---|
+| 真机姿态校准 | `180 - yaw`、roll/pitch 负号（View3DModel.qml:94）及不同 .mesh 初始朝向需真机 roll/pitch/yaw 对照标定 |
+| .mesh 文件归位 | 测试用的模型在旧版目录，正式交付前复制到新版 `qgroundcontrol/resources/` 并重新选路径 |
+| 路径含空格隐患 | `Setting3DModel.qml:220` 存路径时未做 URL 解码，含空格会变 `%20`；建议 `decodeURIComponent()` |
+| Android 平台验证 | `file:///` 访问外部存储受权限限制，需真机验证 |
+
+## 六、可复用知识
+
+1. **`Qt.quaternion(scalar, x, y, z)`——第一个参数是标量 w**，别把顺序搞反
+2. **飞行页显示链路三条件**：载具 + 开关 + 组件挂载，缺一不可；排查时先确认前两个
+3. **弹窗预览是独立试金石**：`modelVisible: true` 硬编码（不依赖载具/开关）——预览能显示 = 模型文件没问题，问题在链路；预览空白 = 路径/文件问题
+4. **`.mesh` 是外部文件**：程序按 `model3DPath` 绝对路径读取，不参与编译，新旧版通用
+5. **"开关无写入途径"排查法**：全源码搜配置项名字，如果只有定义+读取、没有任何 `= 写入`，功能必然是死的
