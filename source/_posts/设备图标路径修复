@@ -1,0 +1,104 @@
+
+# 设备图标路径修复开发日志（2026-08-20）
+
+## 前言
+
+代码评审反馈项 #4（P1）：多设备图标资源路径不一致。实测发现飞行页**看不到设备图标**（只有默认多旋翼正常），属于 P1 级别功能缺失，本次一并修复。
+
+## 一、问题现象
+
+- 飞行页地图上看不到载具图标（固定翼/VTOL/车/船/潜水器全部空白）
+- 只有默认多旋翼显示箭头图标
+- 附：MockLink 面板每次重开，"Vehicle Type"下拉回到默认 PX4（不记忆选择）
+
+## 二、根因分析
+
+**① 图标不显示的根因：QML 里用了未注册的 `/res/` 路径**
+
+`src/FlightMap/MapItems/VehicleMapItem.qml` 里有一段重复的机型判断 `_getSource()`：
+
+```qml
+function _getSource() {
+    if (vehicle.fixedWing) return "/res/fixedWing.png"     // ❌
+    if (vehicle.vtol)      return "/res/customVtol.png"    // ❌
+    if (vehicle.rover) {
+        if (type===10)     return "/res/customCar.png"     // ❌
+        if (type===11)     return "/res/customBoat.png"    // ❌
+    }
+    if (vehicle.sub)       return "/res/sub.png"           // ❌
+    return vehicle.vehicleImageOpaque                       // ✅ 唯一正常
+}
+```
+
+而资源注册事实（`src/FlightMap/CMakeLists.txt`）：
+
+| 资源前缀 | 实际内容 |
+|---|---|
+| `/qmlimages`（46-105行）| ✅ customBoat/Car/Vtol/fixedWing/sub.png 全在这里 |
+| `/res`（47-51行）| ❌ 只有 gear-black.svg 一个文件 |
+
+→ QML 里所有 `/res/custom*.png` 都是**无效路径**，Image 加载失败静默空白。这是"两套机型逻辑漂移"：C++ `FirmwarePlugin::vehicleImageOpaque()`（FirmwarePlugin.cc:621-648）路径全对（`/qmlimages/`），QML 又自己写了一套错的。
+
+**② 下拉不记忆的根因**：`MockLink.qml` 的 `LabelledComboBox` 只有 `currentIndex`，没有 QSettings/Settings 持久化，每次打开面板回到 `currentIndex=0`（PX4）。
+
+## 三、修复方案（统一 C++ 决策）
+
+### 1. `src/FlightMap/MapItems/VehicleMapItem.qml`
+
+删除整个 `_getSource()` 函数，Image 直接绑定 C++ 提供的路径：
+
+```qml
+Image {
+    id:                 vehicleIcon
+    source:             vehicle ? vehicle.vehicleImageOpaque : ""
+    mipmap:             true
+    width:              _root.size
+    sourceSize.width:   _root.size
+    fillMode:           Image.PreserveAspectFit
+    ...
+}
+```
+
+C++ 侧 `vehicleImageOpaque` 已完整覆盖：固定翼/VTOL/车(MAV_TYPE 10)/船(MAV_TYPE 11)/潜水器/默认，路径全部正确注册。
+
+### 2. `src/AppSettings/MockLink.qml`（下拉持久化）
+
+顶部加 `import Qt.labs.settings`，combo 绑定 Settings：
+
+```qml
+LabelledComboBox {
+    id:                 vehicleTypeCombo
+    ...
+    currentIndex:       mockLinkSettings.vehicleTypeIndex   // 启动读取
+    onCurrentIndexChanged: mockLinkSettings.vehicleTypeIndex = currentIndex  // 改动写入
+}
+Settings {
+    id: mockLinkSettings
+    property alias vehicleTypeIndex: vehicleTypeCombo.currentIndex
+}
+```
+
+> ⚠️ Qt.labs.settings 在程序退出时落盘；若改动后未正常退出，可能不保存。
+
+## 四、验证结果
+
+| 步骤 | 结果 |
+|---|---|
+| 编译（QML 改动重新生成资源）| ✅ 通过 |
+| 设置 → Mock Link 选 APM ArduPlane → Start | ✅ 地图显示固定翼图标 |
+| APM ArduSub / APM ArduRover | ✅ 潜水器 / 车图标正常 |
+| 关闭面板重开 | ✅ 下拉保持上次选择 |
+
+## 五、遗留事项
+
+| 项 | 说明 |
+|---|---|
+| VTOL / 船图标验证 | 模拟器无此机型，需真机或临时写死 `source: "/qmlimages/customVtol.png"` 验证资源有效 |
+
+## 六、可复用知识
+
+1. **QGC 资源前缀**：`/qmlimages`（`src/xxx/Images` 目录图）、`/res`（顶层 `resources/` 目录图）——**在 QML 里引用图标前，先查对应 CMakeLists 的 `qt_add_resources` 注册了什么前缀**，否则路径无效静默失败
+2. **机型判断只信 C++**：`FirmwarePlugin::vehicleImageOpaque()` 是唯一权威（含 MAV_TYPE 10=车 / 11=船 的细分），QML 不要重复判断
+3. **MockLink 面板只在 Debug 构建可见**（`SettingsPages.json` 的 `visible: ScreenTools.isDebug`）
+4. **MockLink 可选机型**：PX4 / ArduCopter / ArduPlane / ArduSub / ArduRover / Generic，**没有 VTOL 和船**
+5. **QML 持久化**：用 `Qt.labs.settings`（退出时落盘）或 QGC Fact（实时落盘）
