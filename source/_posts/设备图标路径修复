@@ -1,4 +1,12 @@
-
+---
+title: 设备图标路径修复
+date: 2026-08-14 12:00:00
+categories: [FlyerLink, 设备图标路径修复]
+tags: [标签1, 标签2, 标签3]
+description: 设备图标路径修复
+cover: /img/banner.jpg
+# sticky: 1   # 想置顶就取消这行注释（数字越大越靠前）
+---
 # 设备图标路径修复开发日志（2026-08-20）
 
 ## 前言
